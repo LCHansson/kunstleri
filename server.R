@@ -1,7 +1,5 @@
 ## Libs ----
 library(shiny)
-library(plotly)
-library(ggpattern)
 
 ## Helpers ----
 # App helpers
@@ -23,7 +21,7 @@ source("api/predefined_cases.R")
 ## Initialise placeholder ----
 scoring_func <- cost_comparison_categories
 ui_is_visible <<- FALSE
-dev_mode <- FALSE
+dev_mode <<- TRUE
 
 
 ## App ----
@@ -36,8 +34,8 @@ server <- function(input, output, session) {
       tags$head(
         tags$style(
           HTML(
-            # paste0(c(readLines("www/assets/stylesheets/style.css")))
-            paste0(c(readLines("www/assets/stylesheets/reboot_style.css")))
+            # paste0(c(readLines("www/assets/stylesheets/reboot_style.css")))
+            paste0(c(readLines("https://raw.githubusercontent.com/LCHansson/kunstleri/refs/heads/main/www/assets/stylesheets/reboot_style.css")))
           )
         )
       )
