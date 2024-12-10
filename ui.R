@@ -8,7 +8,7 @@ ui <- page_fluid(
   # title = "TF BETARELEASE: TCO-jämförelse", lang = "sv",
   
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "assets/stylesheets/reboot_style.css"),
+    # tags$link(rel = "stylesheet", type = "text/css", href = "assets/stylesheets/reboot_style.css"),
     tags$meta(charset = "UTF-8"),
     tags$title("Elektrifieringskollen"),
     tags$meta(name = "viewport", content = "width = device-width, initial-scale = 1")
@@ -313,7 +313,8 @@ ui <- page_fluid(
         #   )
         # ),
         div(
-          class = "calculator-element-block",
+          class = "calculator-element-block vertical-order",
+          
           div(
             class = "secondary-input-frame",
             div(
@@ -440,22 +441,6 @@ ui <- page_fluid(
               ),
               div(
                 class = "secondary-input",
-                selectInput(
-                  "p_night_charging_capacity",
-                  "Andel av laddare vid nattladdning",
-                  choices = c(
-                    "100%" = 1,
-                    "75%" = 0.75,
-                    "50%" = 0.5,
-                    "25%" = 0.25,
-                    "Bilen hinner inte ladda fullt" = 2,
-                    "Laddar inte i depå" = 0
-                  ),
-                  selected = "50%"
-                )
-              ),
-              div(
-                # class = "secondary-input",
                 sliderInput(
                   "p_night_charging_ratio",
                   "Hur mycket laddar bilen över natt?",
@@ -468,7 +453,7 @@ ui <- page_fluid(
                 )
               ),
               div(
-                # class = "secondary-input",
+                class = "secondary-input",
                 sliderInput(
                   "p_day_extra_charging",
                   "Hur mycket laddar bilen mellan skift?",
@@ -479,160 +464,94 @@ ui <- page_fluid(
                   ticks = FALSE,
                   post = "%"
                 )
+              )
+            )
+          ),
+          
+          div(
+            class = "tertiary-input-metaframe",
+            div(
+              class = "tertiary-input-frame",
+              
+              div(
+                class = "tertiary-input-frame-header",
+                checkboxInput("o_include_charger", "Laddinfrastruktur")
               ),
               div(
-                # class = "secondary-input",
-                sliderInput(
-                  "p_night_charging_ratio",
-                  "Hur mycket laddar bilen över natt?",
-                  min = 0,
-                  max = 100,
-                  value = 100,
-                  step = 5,
-                  ticks = FALSE,
-                  post = "%"
+                class = "tertiary-inputs",
+                div(
+                  class = "tertiary-input",
+                  numericInput(
+                    "p_charger_cost",
+                    "Installation",
+                    min = 0,
+                    max = 1500000,
+                    value = 250000,
+                    step = 10000
+                  ),
+                  p("kr")
+                ),
+                div(
+                  class = "tertiary-input",
+                  numericInput(
+                    "p_net_cost",
+                    "Förstärkning elnät",
+                    min = 0,
+                    max = 1500000,
+                    value = 0,
+                    step = 10000
+                  ),
+                  p("kr")
+                ),
+                div(
+                  class = "tertiary-input",
+                  numericInput(
+                    "p_charger_sharing_n",
+                    "Hur många fordon delar på laddaren?",
+                    min = 1, max = 20, step = 1, value = 1
+                  )
+                )
+              )
+            ),
+            div(
+              class = "tertiary-input-frame",
+              
+              div(
+                class = "tertiary-input-frame-header",
+                checkboxInput("o_include_taxes", "Fordonsskatt")
+              ),
+              div(
+                class = "tertiary-inputs",
+                div(
+                  class = "tertiary-input",
+                  numericInput(
+                    "p_rollout_year",
+                    "År dieselbilen togs/tas i bruk",
+                    min = 2010,
+                    max = 2025,
+                    value = 2024,
+                    step = 1
+                  )
+                ),
+                div(
+                  class = "tertiary-input",
+                  selectInput(
+                    "p_fuel_type",
+                    "Bränsletyp",
+                    choices = c("Dieselbil", "Bensinbil"),
+                    selected = "Dieselbil"
+                  )
                 )
               )
             )
           )
-        ),
+        )
         
         # div(class = "divider"),
         
         ## Secondary inputs ----
-        div(
-          class = "calculator-element-block",
-          div(
-            class = "secondary-inputs",
-            div(
-              class = "secondary-input",
-              numericInput(
-                "p_run_days_per_week",
-                "Kördagar",
-                min = 0,
-                max = 7,
-                value = 5,
-                step = 1
-              ),
-              p("/vecka")
-            ),
-            div(
-              class = "secondary-input",
-              numericInput(
-                "p_holiday_weeks_per_year",
-                "Körningsfria veckor",
-                min = 0,
-                max = 10,
-                value = 2,
-                step = 1
-              ),
-              p("/år")
-            ),
-            div(
-              class = "secondary-input",
-              numericInput(
-                "p_diesel_per_10km",
-                "Dieselförbrukning",
-                min = 0.5,
-                max = 6,
-                value = 3,
-                step = 0.1
-              ),
-              p("liter/mil")
-            ),
-            div(
-              class = "secondary-input",
-              numericInput(
-                "p_charger_cost",
-                "Kostnad laddinfra",
-                min = 0,
-                max = 1500000,
-                value = 250000,
-                step = 10000
-              ),
-              p("kr")
-            ),
-            div(
-              class = "secondary-input",
-              numericInput(
-                "p_electricity_per_10km",
-                "Elförbrukning",
-                min = 6,
-                max = 18,
-                value = 12,
-                step = 0.2
-              ),
-              p("kWh/mil")
-            ),
-            div(
-              class = "secondary-input",
-              numericInput(
-                "p_vehicle_service_life",
-                "Avskrivningstid",
-                min = 5,
-                max = 14,
-                value = 7,
-                step = 1
-              ),
-              p("år")
-            ),
-            div(
-              class = "secondary-input",
-              selectInput(
-                "p_night_charging_capacity",
-                "Andel av laddare vid nattladdning",
-                choices = c(
-                  "100%" = 1,
-                  "75%" = 0.75,
-                  "50%" = 0.5,
-                  "25%" = 0.25,
-                  "Bilen hinner inte ladda fullt" = 2,
-                  "Laddar inte i depå" = 0
-                ),
-                selected = "50%"
-              )
-            ),
-            div(
-              # class = "secondary-input",
-              sliderInput(
-                "p_night_charging_ratio",
-                "Hur mycket laddar bilen över natt?",
-                min = 0,
-                max = 100,
-                value = 100,
-                step = 5,
-                ticks = FALSE,
-                post = "%"
-              )
-            ),
-            div(
-              # class = "secondary-input",
-              sliderInput(
-                "p_day_extra_charging",
-                "Hur mycket laddar bilen mellan skift?",
-                min = 0,
-                max = 100,
-                value = 0,
-                step = 5,
-                ticks = FALSE,
-                post = "%"
-              )
-            ),
-            div(
-              # class = "secondary-input",
-              sliderInput(
-                "p_night_charging_ratio",
-                "Hur mycket laddar bilen över natt?",
-                min = 0,
-                max = 100,
-                value = 100,
-                step = 5,
-                ticks = FALSE,
-                post = "%"
-              )
-            )
-          )
-        )
+        
+        
         
         # div(class = "divider"),
         
