@@ -235,35 +235,6 @@ ui <- page_fluid(
           )
         ),
         
-        
-        # navset_pill(
-        #   selected = "TCO",
-        #   # selected = "Kostnadsdrivare",
-        #   ## Diesel/BEV comparison tab ----
-        #   nav_panel(
-        #     title = "TCO",
-        #     uiOutput("tco_comparison_bars_ui")
-        #   ),
-        #   
-        #   ## Cost drivers tab ----
-        #   nav_panel(
-        #     title = "Kostnadsdrivare",
-        #     uiOutput("bev_cost_drivers"),
-        #     uiOutput("bev_cost_analysis")
-        #   ),
-        #   
-        #   ## Battery comparison tab ----
-        #   # nav_panel(title = "What if...", uiOutput("what_if_scenarios")),
-        #   
-        #   # ## Dev tab 1: All params ----
-        #   nav_panel(title = "Dev params", tableOutput("show_case_inputs")),
-        #   # 
-        #   # ## Dev tab 2: Plot ----
-        #   nav_panel(title = "Dev plot", plotOutput("driving_range_plot"))
-        #   # 
-        # ),
-        
-        
         div(
           class = "calculator-element-block",
           id = "calculator-bar-id",
@@ -276,42 +247,6 @@ ui <- page_fluid(
         div(class = "divider"),
         
         ## Span inputs ----
-        # div(
-        #   class = "calculator-element-block",
-        #   div(
-        #     class = "calculation-explanation",
-        #     div(class = "calculation-explanation-text", div(
-        #       HTML("Vi har räknat med följande värden: &nbsp;")
-        #       # popover(
-        #       #   bs_icon("question-circle"),
-        #       #   tags$p(
-        #       #     "Reglagen visar prognosen för ett intervall för ",
-        #       #     tags$em("genomsnittspriset"),
-        #       #     "för drivmedel under",
-        #       #     HTML("avskrivnings&shy;perioden.")
-        #       #   ),
-        #       #   tags$p(
-        #       #     "Kalkylen för fordonets TCO är kraftigt beroende av framtidens drivmedelspriser. Därför antar modellen att priset inte är helt förutsägbart. Det är därför modellen ger en ",
-        #       #     tags$em("procentskattning"),
-        #       #     "för elbilens lönsamhet istället för en så kallad punktskattning."
-        #       #   ),
-        #       #   tags$p(
-        #       #     "Intervallet är framtaget av Transportföretagen baserat på expertprognoser. Genom att dra i intervallets ändar kan du själv ändra vilka antaganden om framtidens priser beräkningen baseras på."
-        #       #   ),
-        #       #   tags$p(
-        #       #     "Intervallet är konstruerat så att värden i mitten av intervallet är mer sannolika än värden i intervallets ändar."
-        #       #   )
-        #       # )
-        #     )),
-        #     div(
-        #       class = "explanation-button",
-        #       popover(
-        #         actionButton("explain_button", "Se hur vi har räknat", class = "btn-secondary"),
-        #         "Under utveckling"
-        #       )
-        #     )
-        #   )
-        # ),
         div(
           class = "calculator-element-block vertical-order",
           
@@ -546,28 +481,7 @@ ui <- page_fluid(
             )
           )
         )
-        
-        # div(class = "divider"),
-        
-        ## Secondary inputs ----
-        
-        
-        
-        # div(class = "divider"),
-        
-        ## Send e-mail button ----
-        ## TODO:
-        ## - create pop-up window
-        ## - create e-mail service? This should probably come later.
-        ## - enable "load" on URL parse
-        # div(
-        #   class = "email-button",
-        #   actionButton("send_email_button", "Skicka som e-post", class = "btn-primary"),
-        # )
       )
     )
-    
-    ## Footer ----
-    ## 
   )
 )
