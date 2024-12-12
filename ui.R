@@ -28,11 +28,6 @@ ui <- page_fluid(
         class = "primary-sidebar",
         
         div(
-          class = "app-title",
-          "Elektrifieringskollen"
-        ),
-        
-        div(
           class = "primary-inputs",
           
           ## Primary inputs ----

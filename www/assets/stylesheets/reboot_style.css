@@ -63,51 +63,6 @@ img {
 }
 
 
-
-/************* HEADER *************/
-
-.header {
-  flex-direction: column;
-  row-gap: 20px;
-  align-items: center;
-}
-
-.app-title {
-  /*color: rgb(0, 101, 137);
-  font-family: Geologica, sans-serif;
-  font-size: 28px;
-  font-weight: 500;
-  
-  padding: 4px 20px 4px 16px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  
-  
-  background: transparent;
-  border-style: solid;
-  border-radius: 100px;
-  border-color: rgb(0, 101, 137);
-  border-width: 2px; */
-}
-
-.logo {
-  width: 180px;
-  max-width: 200px;
-  min-width: 120px;
-  height: auto;
-}
-
-.app-catchphrase {
-  font-family: "Source Sans 3", sans-serif;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 1.3;
-  text-align: center;
-  color: rgba(0, 0, 0, 0.7);
-}
-
-
-
 /************* SIDEBAR *************/
 
 .primary-sidebar {
