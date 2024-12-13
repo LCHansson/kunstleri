@@ -23,16 +23,14 @@ ui <- page_fluid(
     div(
       class = "calculator",
       
-      ## Primary sidebar ----
+      ## Primary inputs ----
       div(
-        class = "primary-sidebar",
+        class = "sidebar",
         
         div(
           class = "primary-inputs",
           
           ## Primary inputs ----
-          # TODO: Wrap these in layout div containers to enable rounded corners,
-          # width control etc.
           numericInput(
             "p_diesel_truck_cost",
             label = span(
@@ -155,148 +153,144 @@ ui <- page_fluid(
           )
         ),
         
-        div(
-          class = "calculate-button",
-          actionButton("run_sim_button", "Beräkna", class = "btn-primary")
-        ),
-        
+        actionButton("run_sim_button", "Beräkna", class = "btn-primary"),
         
         ## Scenario buttons ----
         div(
-          # class = "calculator-element-block",
-          class = "scenario-block",
-          style = "flex-direction: column; row-gap: 16px;",
-          div(class = "divider"),
+          class = "sidebar-scenarios",
           div(
-            # class = "scenario-block",
-            class = "scenario-buttons",
-            div(
-              class = "fine-print",
-              tags$span(
-                style = "width: 100%;",
-                "Har du inga siffror framför dig just nu?",
-                tags$br("Testa ett av följande scenarios:"))
-            ),
-            div(
-              class = "scenario-button-row",
-              actionButton("scenario_1_button", "Dagligvaror glesbygd", class = "btn-secondary"),
-              actionButton("scenario_2_button", "Skogsbil", class = "btn-secondary")
-            ),
-            div(
-              class = "scenario-button-row",
-              actionButton("scenario_3_button", "62 ton fjärrbil", class = "btn-secondary"),
-              actionButton("scenario_4_button", "16 ton stadsbil", class = "btn-secondary")
-            )
+            class = "fine-print",
+            tags$span(
+              "Har du inga siffror framför dig just nu?",
+              tags$br("Testa ett av följande scenarios:"))
+          ),
+          div(
+            class = "sidebar-scenario-buttons",
+            actionButton("scenario_1_button", "Dagligvaror glesbygd", class = "btn-secondary"),
+            actionButton("scenario_2_button", "Skogsbil", class = "btn-secondary"),
+            actionButton("scenario_3_button", "62 ton fjärrbil", class = "btn-secondary"),
+            actionButton("scenario_4_button", "16 ton stadsbil", class = "btn-secondary")
           )
         )
       ),
       
-      ## Main view ----
+      ## Result ----
       div(
-        class = "main-view",
+        class = "result",
         
-        ## Hide the calculator on load ----
+        ## Empty state ----
         div(
           id = "hide-calculator",
+          class = "empty-state",
           div(
-            class = "hide-text",
-            div(
-              class = "hide-text-header",
-              "Fyll i värden i menyn till vänster och tryck på Beräkna för att starta appen"
-            ),
-            div(
-              class = "hide-text-subheader",
-              "Har du inga siffror framför dig just nu?"
-            ),
-            div(
-              tags$strong(style = "text-align: center", "Testa ett scenario längst ned i menyn till vänster.")
-            )
+            class = "empty-state-heading",
+            "Fyll i värden för att beräkna kostnaden"
+          ),
+          div(
+            class = "empty-state-text",
+            "Har du inga siffror framför dig just nu? Testa ett scenario längst ner till vänster."
           )
         ),
         
-        ## Main view header ----
+        ## Result header ----
         div(
-          class = "calculator-element-block",
+          class = "result-header",
           div(
-            class = "column-block",
-            div(
-              class = "main-result-header",
-              uiOutput("scoring_header")
-            ),
-            div(
-              class = "result-tagline",
-              uiOutput("scoring_tagline")
-            )
+            class = "result-header-heading",
+            uiOutput("scoring_header")
+          ),
+          div(
+            class = "result-header-tagline",
+            uiOutput("scoring_tagline")
           )
         ),
         
+        ## Result graph ----
         div(
-          class = "calculator-element-block",
+          class = "result-graph",
           id = "calculator-bar-id",
-          div(
-            class = "tco-results",
-            uiOutput("tco_comparison_bars_ui")
-          )
+          uiOutput("tco_comparison_bars_ui")
         ),
         
-        div(class = "divider"),
-        
-        ## Span inputs ----
+        ## Secondary inputs ----
         div(
-          class = "calculator-element-block vertical-order",
-          
+          class = "frame",
           div(
-            class = "secondary-input-frame",
+            class = "frame-header",
+            "Antaganden"
+          ),
+          div(
+            class = "frame-section slider-inputs",
             div(
-              class = "secondary-input-frame-header",
-              "Antaganden"
-            ),
+              class = "slider-input span-diesel",
+              sliderInput(
+                "p_diesel_price_span",
+                "Dieselpris per liter",
+                min = 10,
+                max = 30,
+                value = 15,
+                step = 1,
+                ticks = FALSE,
+                dragRange = FALSE,
+                post = "kr"
+              )),
             div(
-              class = "secondary-span-inputs",
-              div(
-                class = "span-input span-diesel",
-                sliderInput(
-                  "p_diesel_price_span",
-                  "Dieselpris per liter",
-                  min = 10,
-                  max = 30,
-                  value = 15,
-                  step = 1,
-                  ticks = FALSE,
-                  dragRange = FALSE,
-                  post = "kr"
-                )),
-              div(
-                class = "span-input span-private-charging",
-                sliderInput(
-                  "p_private_charging_price_span",
-                  "Pris depåladdning per kWh",
-                  min = 0.2,
-                  max = 2.5,
-                  value = 1.1,
-                  step = 0.1,
-                  ticks = FALSE,
-                  dragRange = FALSE,
-                  post = "kr"
-                )
-              ),
-              div(
-                class = "span-input span-public-charging",
-                sliderInput(
-                  "p_public_charging_price_span",
-                  "Pris snabbladdning per kWh",
-                  min = 1,
-                  max = 6,
-                  value = 4.5,
-                  step = 0.25,
-                  ticks = FALSE,
-                  dragRange = FALSE,
-                  post = "kr"
-                )
+              class = "slider-input span-private-charging",
+              sliderInput(
+                "p_private_charging_price_span",
+                "Pris depåladdning per kWh",
+                min = 0.2,
+                max = 2.5,
+                value = 1.1,
+                step = 0.1,
+                ticks = FALSE,
+                dragRange = FALSE,
+                post = "kr"
               )
             ),
             div(
+              class = "slider-input span-public-charging",
+              sliderInput(
+                "p_public_charging_price_span",
+                "Pris snabbladdning per kWh",
+                min = 1,
+                max = 6,
+                value = 4.5,
+                step = 0.25,
+                ticks = FALSE,
+                dragRange = FALSE,
+                post = "kr"
+              )
+            )
+          ),
+          div(
+            class = "frame-section columns",
+            div(
               class = "secondary-inputs",
+              div(
+                class = "secondary-input",
+                numericInput(
+                  "p_diesel_per_10km",
+                  "Dieselförbrukning",
+                  min = 0.5,
+                  max = 6,
+                  value = 3,
+                  step = 0.1
+                ),
+                p("liter/mil")
+              ),
+              div(
+                class = "secondary-input",
+                numericInput(
+                  "p_electricity_per_10km",
+                  "Elförbrukning",
+                  min = 6,
+                  max = 18,
+                  value = 12,
+                  step = 0.2
+                ),
+                p("kWh/mil")
+              ),
               div(
                 class = "secondary-input",
                 numericInput(
@@ -321,18 +315,9 @@ ui <- page_fluid(
                 ),
                 p("/år")
               ),
-              div(
-                class = "secondary-input",
-                numericInput(
-                  "p_diesel_per_10km",
-                  "Dieselförbrukning",
-                  min = 0.5,
-                  max = 6,
-                  value = 3,
-                  step = 0.1
-                ),
-                p("liter/mil")
-              ),
+            ),
+            div(
+              class = "secondary-inputs",
               div(
                 class = "secondary-input",
                 numericInput(
@@ -344,18 +329,6 @@ ui <- page_fluid(
                   step = 10000
                 ),
                 p("kr")
-              ),
-              div(
-                class = "secondary-input",
-                numericInput(
-                  "p_electricity_per_10km",
-                  "Elförbrukning",
-                  min = 6,
-                  max = 18,
-                  value = 12,
-                  step = 0.2
-                ),
-                p("kWh/mil")
               ),
               div(
                 class = "secondary-input",
@@ -396,86 +369,88 @@ ui <- page_fluid(
                 )
               )
             )
-          ),
-          
+          )
+        ),
+
+        ## Optional inputs ----
+        div(
+          class = "columns",
           div(
-            class = "tertiary-input-metaframe",
+            class = "frame",
             div(
-              class = "tertiary-input-frame",
-              
-              div(
-                class = "tertiary-input-frame-header",
-                checkboxInput("o_include_charger", "Laddinfrastruktur")
-              ),
-              div(
-                class = "tertiary-inputs",
-                div(
-                  class = "tertiary-input",
-                  numericInput(
-                    "p_charger_cost",
-                    "Installation",
-                    min = 0,
-                    max = 1500000,
-                    value = 250000,
-                    step = 10000
-                  ),
-                  p("kr")
-                ),
-                div(
-                  class = "tertiary-input",
-                  numericInput(
-                    "p_net_cost",
-                    "Förstärkning elnät",
-                    min = 0,
-                    max = 1500000,
-                    value = 0,
-                    step = 10000
-                  ),
-                  p("kr")
-                ),
-                div(
-                  class = "tertiary-input",
-                  numericInput(
-                    "p_charger_sharing_n",
-                    "Hur många fordon delar på laddaren?",
-                    min = 1, max = 20, step = 1, value = 1
-                  )
-                )
-              )
+              class = "frame-header",
+              checkboxInput("o_include_charger", "Laddinfrastruktur")
             ),
             div(
-              class = "tertiary-input-frame",
-              
+              class = "frame-section secondary-inputs",
               div(
-                class = "tertiary-input-frame-header",
-                checkboxInput("o_include_taxes", "Fordonsskatt")
+                class = "secondary-input",
+                numericInput(
+                  "p_charger_cost",
+                  "Installation",
+                  min = 0,
+                  max = 1500000,
+                  value = 250000,
+                  step = 10000
+                ),
+                p("kr")
               ),
               div(
-                class = "tertiary-inputs",
-                div(
-                  class = "tertiary-input",
-                  numericInput(
-                    "p_rollout_year",
-                    "År dieselbilen togs/tas i bruk",
-                    min = 2010,
-                    max = 2025,
-                    value = 2024,
-                    step = 1
-                  )
+                class = "secondary-input",
+                numericInput(
+                  "p_net_cost",
+                  "Förstärkning elnät",
+                  min = 0,
+                  max = 1500000,
+                  value = 0,
+                  step = 10000
                 ),
-                div(
-                  class = "tertiary-input",
-                  selectInput(
-                    "p_fuel_type",
-                    "Bränsletyp",
-                    choices = c("Dieselbil", "Bensinbil"),
-                    selected = "Dieselbil"
-                  )
+                p("kr")
+              ),
+              div(
+                class = "secondary-input",
+                numericInput(
+                  "p_charger_sharing_n",
+                  "Hur många fordon delar på laddaren?",
+                  min = 1, max = 20, step = 1, value = 1
+                )
+              )
+            )
+          ),
+          div(
+            class = "frame",
+
+            div(
+              class = "frame-header",
+              checkboxInput("o_include_taxes", "Fordonsskatt")
+            ),
+            div(
+              class = "frame-section secondary-inputs",
+              div(
+                class = "secondary-input",
+                numericInput(
+                  "p_rollout_year",
+                  "År dieselbilen togs/tas i bruk",
+                  min = 2010,
+                  max = 2025,
+                  value = 2024,
+                  step = 1
+                )
+              ),
+              div(
+                class = "secondary-input",
+                selectInput(
+                  "p_fuel_type",
+                  "Bränsletyp",
+                  choices = c("Dieselbil", "Bensinbil"),
+                  selected = "Dieselbil"
                 )
               )
             )
           )
         )
+
+        ## End ----
       )
     )
   )
