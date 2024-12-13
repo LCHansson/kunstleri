@@ -414,20 +414,6 @@ img {
   background-color: #AA3E84;
 }
 
-.tco-component-diesel-uncertainty {
-  background: repeating-linear-gradient(
-    -45deg,
-    #AA3E84,
-    #AA3E84 4px,
-    #FFFFFF 4px,
-    #FFFFFF 8px
-  );
-  border-radius: inherit;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  opacity: 0.6;
-}
-
 .tco-component-charger {
   background-color: rgba(0, 101, 137,0.8);
 }
@@ -436,36 +422,8 @@ img {
   background-color: #106939;
 }
 
-.tco-component-private-charging-uncertainty {
-  background: repeating-linear-gradient(
-    -45deg,
-    #106939,
-    #106939 4px,
-    #FFFFFF 4px,
-    #FFFFFF 8px
-  );
-  border-radius: inherit;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  opacity: 0.6;
-}
-
 .tco-component-public-charging {
   background-color: #189350;
-}
-
-.tco-component-public-charging-uncertainty {
-  background: repeating-linear-gradient(
-    -45deg,
-    #189350,
-    #189350 4px,
-    #FFFFFF 4px,
-    #FFFFFF 8px
-  );
-  border-radius: 10px;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  opacity: 0.6;
 }
 
 .tco-bar-label {
