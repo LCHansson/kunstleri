@@ -21,6 +21,7 @@ source("api/predefined_cases.R")
 ## Initialise placeholder ----
 scoring_func <- cost_comparison_categories
 ui_is_visible <<- FALSE
+case_global <<- NULL
 
 
 ## App ----
@@ -84,9 +85,9 @@ server <- function(input, output, session) {
   })
   
   ValidateInputs <- reactive({
-    input$run_sim_button
+    # input$run_sim_button
     
-    isolate({
+    # isolate({
       primary_inputs <- c(
         "p_diesel_truck_cost",
         "p_bev_truck_cost",
@@ -100,16 +101,18 @@ server <- function(input, output, session) {
       
       input_vals <- map(primary_inputs, function(i) input[[i]])
       # input_vals_global <<- map(primary_inputs, function(i) input[[i]])
-    })
+    # })
     
-    if(any(is.na(input_vals)) || any(is.null(input_vals)))
+    if (any(is.na(input_vals)) || any(is.null(input_vals)))
       return(FALSE)
     else
       return(TRUE)
   })
   
   CaseData <- reactive({
-    input$run_sim_button
+    # input$run_sim_button
+    
+    message("ValidateInputs() = ", ValidateInputs())
     
     if (ValidateInputs()) {
       
@@ -137,8 +140,8 @@ server <- function(input, output, session) {
         case_global <<- case
       # })
       return(case)
-    } else{
-      return(NULL)
+    } else {
+      return(case_global)
     }
     
   })
