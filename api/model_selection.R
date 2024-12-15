@@ -39,7 +39,7 @@ best_models <- function(case, n = 20, pdist = TRUE) {
   dist_at_p <- case$shorter_driving_distance
   p <- case$frequency_above_typical_range
   
-  battery_capacity_km <- case$battery_size / (case$electricity_per_10km / 10)
+  battery_capacity_km <- case$battery_size / (case$electricity_per_10km / 10) * case$total_home_charging
   
   test_grid_diffs <- expand_grid(
     nu = seq(0.25, 3, by = 0.25),
