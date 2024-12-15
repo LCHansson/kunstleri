@@ -29,7 +29,7 @@ server <- function(input, output, session) {
   
   
   ## dev CSS ----
-   
+  
   output$tco_css <- renderUI({
     tags$head(
       tags$style(
@@ -51,7 +51,6 @@ server <- function(input, output, session) {
       if (input$run_sim_button > 0) {
         
         # if(ValidateInputs()) {
-        # removeUI("")
         removeUI("#hide-calculator")
         ui_is_visible <<- TRUE
         # }
@@ -67,18 +66,21 @@ server <- function(input, output, session) {
   CaseInputs <- reactive({
     input$run_sim_button
     
-    isolate({
-      x <- reactiveValuesToList(input)
-      x$p_charge_modes <- input$p_charge_modes
+    # isolate({
+      all_inputs <- reactiveValuesToList(input)
+      all_inputs$p_charge_modes <- input$p_charge_modes
       test_cbgi <<- input$p_charge_modes
       
-      x <- x[order(names(x))]
+      all_inputs <- all_inputs[order(names(all_inputs))]
       # x <- x |> purrr::discard(stringr::str_detect(names(x), "button"))
-      x <- x |> purrr::keep(stringr::str_detect(names(x), "^p_"))
-      names(x) <- stringr::str_remove(names(x), "^p_")
-    })
+      params <- all_inputs |> purrr::keep(stringr::str_detect(names(all_inputs), "^p_"))
+      names(params) <- stringr::str_remove(names(params), "^p_")
+      
+      params$opts <- all_inputs |> purrr::keep(stringr::str_detect(names(all_inputs), "^o_"))
+      names(params$opts) <- stringr::str_remove(names(params$opts), "^o_")
+    # })
     
-    x
+    params
   })
   
   ValidateInputs <- reactive({
@@ -88,6 +90,7 @@ server <- function(input, output, session) {
       primary_inputs <- c(
         "p_diesel_truck_cost",
         "p_bev_truck_cost",
+        "p_bev_climate_premium",
         "p_battery_size",
         "p_shorter_driving_distance",
         "p_longer_driving_distance",
@@ -110,13 +113,17 @@ server <- function(input, output, session) {
     
     if (ValidateInputs()) {
       
-      isolate({
+      # isolate({
         ## Get case params
         case <- sensible_defaults
         
         case_inputs <- CaseInputs()
+        
+        # Pre-processing to deal with selectInput() returning character instead of numeric
         case_inputs$frequency_above_typical_range <- as.numeric(case_inputs$frequency_above_typical_range)
-        case_inputs$night_charging_capacity <- as.numeric(case_inputs$night_charging_capacity)
+        case_inputs$night_charging <- as.numeric(case_inputs$night_charging)
+        case_inputs$day_extra_home_charging <- as.numeric(case_inputs$day_extra_home_charging)
+        case_inputs$bev_tire_increase <- as.numeric(case_inputs$bev_tire_increase)
         
         case_inputs_global <<- case_inputs
         
@@ -128,7 +135,7 @@ server <- function(input, output, session) {
         case <- profitability_simulation(case)
         
         case_global <<- case
-      })
+      # })
       return(case)
     } else{
       return(NULL)
@@ -206,9 +213,9 @@ server <- function(input, output, session) {
   
   output$tco_comparison_bars_ui <- renderUI({
     case <- CaseData()
-    if(is.null(case)) return(NULL)
+    if (is.null(case)) return(NULL)
     div_heights <- BarHeights()$div_heights
-    div_height_global <<- div_heights
+    div_heights_global <<- div_heights
     
     div(
       # Hela stapeldiagrammet
@@ -511,6 +518,206 @@ server <- function(input, output, session) {
     )
   })
   
+  output$charger_cost <- renderUI({
+    div(
+      class = "frame-section secondary-inputs",
+      div(
+        class = "secondary-input",
+        numericInput(
+          "p_charger_cost",
+          "Installation laddare",
+          min = 0,
+          max = 1500000,
+          value = 250000,
+          step = 10000
+        ),
+        p("kr")
+      ),
+      div(
+        class = "secondary-input",
+        numericInput(
+          "p_grid_cost",
+          "Förstärkning elnät",
+          min = 0,
+          max = 1500000,
+          value = 0,
+          step = 10000
+        ),
+        p("kr")
+      ),
+      div(
+        class = "secondary-input",
+        numericInput(
+          "p_charger_sharing_n",
+          "Hur många fordon delar på laddaren?",
+          min = 1, max = 20, step = 1, value = 1
+        )
+      )
+    )
+  })
+  
+  
+  output$taxes <- renderUI({
+    if (input$p_vehicle_class == "vehicle_class_lorry") {
+      res <- div(
+        class = "frame-section secondary-inputs",
+        div(
+          class = "secondary-input",
+          numericInput(
+            "p_ice_rollout_year",
+            "År dieselbilen togs/tas i bruk",
+            min = 2010,
+            max = 2025,
+            value = 2024,
+            step = 1
+          )
+        ),
+        div(
+          class = "secondary-input",
+          selectInput(
+            "p_fuel_type",
+            "Bränsletyp förbränningsmotor",
+            choices = c("Diesel", "Bensin"),
+            selected = "Dieselbil"
+          )
+        ),
+        div(
+          class = "secondary-input",
+          numericInput(
+            "p_ice_co2_value",
+            "CO2-utsläpp bensin/dieselbil",
+            min = 10,
+            max = 1000,
+            value = 350,
+            step = 10
+          ),
+          p("/km")
+        )
+      )
+      return(res)
+    } else {
+      res <- div(
+        class = "frame-section secondary-inputs",
+        div(
+          class = "secondary-input",
+          numericInput(
+            "p_ice_weight",
+            "Totalvikt dieselbil",
+            min = 3.5,
+            max = 64,
+            value = 16,
+            step = 0.5
+          ),
+          p("ton")
+        ),
+        div(
+          class = "secondary-input",
+          numericInput(
+            "p_num_axles",
+            "Antal axlar",
+            min = 2,
+            max = 6,
+            value = 3,
+            step = 1
+          )
+        )
+      )
+      return(res)
+    }
+  })
+  
+  
+  output$service <- renderUI({
+    if (input$p_vehicle_class == "vehicle_class_lorry") {
+      res <- div(
+        class = "frame-section secondary-inputs",
+        div(
+          class = "secondary-input",
+          numericInput(
+            "p_ice_service_cost",
+            "Servicekostnad per mil, bensin/dieselbil",
+            min = 1,
+            max = 25,
+            value = 8,
+            step = 0.5
+          ),
+          p("kr")
+        ),
+        div(
+          class = "secondary-input",
+          numericInput(
+            "p_bev_service_cost",
+            "Servicekostnad per mil, elbil",
+            min = 1,
+            max = 25,
+            value = 7.5,
+            step = 0.5
+          ),
+          p("kr")
+        )
+      )
+      return(res)
+    } else {
+      res <- div(
+        class = "frame-section secondary-inputs",
+        div(
+          class = "secondary-input",
+          numericInput(
+            "p_ice_service_cost",
+            "Servicekostnad per mil, dieselbil",
+            min = 1,
+            max = 25,
+            value = 15,
+            step = 1
+          ),
+          p("kr")
+        ),
+        div(
+          class = "secondary-input",
+          numericInput(
+            "p_bev_service_cost",
+            "Servicekostnad per mil, elbil",
+            min = 1,
+            max = 25,
+            value = 13,
+            step = 1
+          ),
+          p("kr")
+        )
+      )
+      return(res)
+    }
+  })
+  
+  
+  output$tires <- renderUI({
+    div(
+      class = "frame-section secondary-inputs",
+      div(
+        class = "secondary-input",
+        numericInput(
+          "p_ice_tire_cost",
+          "Däckkostnad per mil, diesel/bensinbil",
+          min = 0,
+          max = 10,
+          value = 5,
+          step = 0.1
+        ),
+        p("kr")
+      ),
+      div(
+        class = "secondary-input",
+        selectInput(
+          "p_bev_tire_increase",
+          "Ökat däckslitage med elbil",
+          choices = setNames(seq(0, 1, 0.1), paste(seq(0, 100, 10), "%")),
+          selected = 0.2
+        )
+      )
+    )
+  })
+  
+  
   
   ## Display inputs (debugging) ----
   
@@ -639,129 +846,6 @@ server <- function(input, output, session) {
   
   ## Old/discarded ----
   
-  # output$bev_cost_drivers <- renderUI({
-  #   div_heights <- BarHeights()$div_heights_cost_shares
-  #   cost_shares  <- BarHeights()$cost_shares 
-  #   
-  #   div(
-  #     # Hela stapeldiagrammet
-  #     class = "tco-graph",
-  #     div(
-  #       # En av staplarna med etiketter
-  #       class = "tco-bar",
-  #       div(
-  #         # Stapeln
-  #         class = "tco-components",
-  #         div(
-  #           class = "tco-component tco-component-public-charging",
-  #           style = glue::glue("height: {div_heights[['public_charging']]}px;")
-  #         ),
-  #         div(
-  #           class = "tco-component tco-component-private-charging",
-  #           style = glue::glue("height: {div_heights[['private_charging']]}px;")
-  #         ),
-  #         div(
-  #           class = "tco-component tco-component-charger",
-  #           style = glue::glue("height: {div_heights[['charger']]}px;")
-  #         ),
-  #         div(
-  #           class = "tco-component tco-component-vehicle",
-  #           style = glue::glue("height: {div_heights[['battery']]}px;")
-  #         )
-  #       )
-  #     ),
-  #     
-  #     div(
-  #       class = "cost-driver-explanation",
-  #       div(
-  #         class = "cost-driver-component",
-  #         tags$p(
-  #           tags$strong(class = "text-public-charging", "Snabbladdning "),
-  #           popover(
-  #             bs_icon("question-circle"),
-  #             "Ett komplement till den betydligt billigare depåladdningen för de flesta transportupplägg."
-  #           )
-  #         ),
-  #         tags$p(
-  #             glue::glue("ca {tsep_t(case$sim_grid$public_charging_cost)} kr"),
-  #           "eller",
-  #             glue::glue("{perc_t(case$sim_grid$public_charging_cost)}"),
-  #           "av bilens totala TCO."
-  #         )
-  #       ),
-  #       div(
-  #         class = "cost-driver-component",
-  #         tags$p(
-  #           tags$strong(class = "text-private-charging", "Depåladdning "),
-  #           popover(
-  #             bs_icon("question-circle"),
-  #             "Den huvudsakliga drivmedelskällan för de flesta transportupplägg med elbil.
-  #             Bör vara betydligt billigare per kWh än publik snabbladdning."
-  #           )
-  #         ),
-  #         tags$p(
-  #           if_else(
-  #             tsep_t(cost_shares$private_charging_cost_lower) == tsep_t(cost_shares$private_charging_cost_higher),
-  #             glue::glue("ca {tsep_t(cost_shares$private_charging_cost_higher)} kr"),
-  #             glue::glue("ca {tsep_t(cost_shares$private_charging_cost_lower)} - {tsep_t(cost_shares$private_charging_cost_higher)} kr")
-  #           ),
-  #           "eller",
-  #           if_else(
-  #             perc_t(cost_shares$private_charging_share_lower) == perc_t(cost_shares$private_charging_share_higher),
-  #             glue::glue("{perc_t(cost_shares$private_charging_share_lower)}"),
-  #             glue::glue("{perc_t(cost_shares$private_charging_share_lower)} - {perc_t(cost_shares$private_charging_share_higher)}")
-  #           ),
-  #           "av bilens totala TCO."
-  #         )
-  #       ),
-  #       div(
-  #         class = "cost-driver-component",
-  #         tags$p(
-  #           tags$strong(
-  #             class = "text-charger",
-  #             "Laddinfrastruktur"
-  #           ),
-  #           popover(
-  #             bs_icon("question-circle"),
-  #             "En merkostnad som ofta följer med ett elbilsköp. Därför räknas
-  #               den in, nyttjandeviktat, i fordonets TCO.
-  #               Denna kostnad utgör vanligen en mindre andel av fordonets TCO."
-  #           )
-  #         ),
-  #         tags$p(
-  #           glue::glue("{tsep_t(cost_shares$charger_cost)} kr"),
-  #           "eller",
-  #           if_else(
-  #             perc_t(cost_shares$charger_share_lower) == perc_t(cost_shares$charger_share_higher),
-  #             glue::glue("ca {perc_t(cost_shares$charger_share_lower)}"),
-  #             glue::glue("ca {perc_t(cost_shares$charger_share_lower)} - {perc_t(cost_shares$charger_share_higher)}")
-  #           ),
-  #           "av bilens totala TCO."
-  #         )
-  #       ),
-  #       div(
-  #         class = "cost-driver-component",
-  #         tags$p(
-  #           tags$strong(class = "text-vehicle", "Batteri/drivlina "),
-  #           popover(
-  #             bs_icon("question-circle"),
-  #             "Skillnaden i pris mellan diesel- elbil och kan beskrivas som merkostnaden för en batteridriven drivlina. Batteriets merkostnad utgör ofta en stor del av elbilars TCO."
-  #           )
-  #         ),
-  #         tags$p(
-  #           glue::glue("{tsep_t(cost_shares$battery_cost)} kr"),
-  #           "eller",
-  #           if_else(
-  #             perc_t(cost_shares$battery_share_lower) == perc_t(cost_shares$battery_share_higher),
-  #             glue::glue("ca {perc_t(cost_shares$battery_share_lower)}"),
-  #             glue::glue("ca {perc_t(cost_shares$battery_share_lower)} - {perc_t(cost_shares$battery_share_higher)}")
-  #           ),
-  #           "av bilens totala TCO."
-  #         )
-  #       )
-  #     )
-  #   )
-  # })
 }
 
 
