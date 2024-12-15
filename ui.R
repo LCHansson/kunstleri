@@ -31,6 +31,17 @@ ui <- page_fluid(
           class = "primary-inputs",
           
           ## Primary inputs ----
+          radioButtons(
+            "p_vehicle_class",
+            NULL,
+            choices = c(
+              "Lätt lastbil" = "vehicle_class_lorry",
+              "Tung lastbil" = "vehicle_class_truck"
+            ),
+            selected = "vehicle_class_truck",
+            inline = TRUE
+          ),
+          
           numericInput(
             "p_diesel_truck_cost",
             label = span(
@@ -224,7 +235,7 @@ ui <- page_fluid(
             div(
               class = "slider-input span-diesel",
               sliderInput(
-                "p_diesel_price_span",
+                "p_diesel_cost",
                 "Dieselpris per liter",
                 min = 10,
                 max = 30,
@@ -237,7 +248,7 @@ ui <- page_fluid(
             div(
               class = "slider-input span-private-charging",
               sliderInput(
-                "p_private_charging_price_span",
+                "p_private_charging_cost",
                 "Pris depåladdning per kWh",
                 min = 0.2,
                 max = 2.5,
@@ -251,7 +262,7 @@ ui <- page_fluid(
             div(
               class = "slider-input span-public-charging",
               sliderInput(
-                "p_public_charging_price_span",
+                "p_public_charging_cost",
                 "Pris snabbladdning per kWh",
                 min = 1,
                 max = 6,
@@ -321,18 +332,6 @@ ui <- page_fluid(
               div(
                 class = "secondary-input",
                 numericInput(
-                  "p_charger_cost",
-                  "Kostnad laddinfra",
-                  min = 0,
-                  max = 1500000,
-                  value = 250000,
-                  step = 10000
-                ),
-                p("kr")
-              ),
-              div(
-                class = "secondary-input",
-                numericInput(
                   "p_vehicle_service_life",
                   "Avskrivningstid",
                   min = 5,
@@ -344,34 +343,26 @@ ui <- page_fluid(
               ),
               div(
                 class = "secondary-input",
-                sliderInput(
-                  "p_night_charging_ratio",
+                selectInput(
+                  "p_night_charging",
                   "Hur mycket laddar bilen över natt?",
-                  min = 0,
-                  max = 100,
-                  value = 100,
-                  step = 5,
-                  ticks = FALSE,
-                  post = "%"
+                  choices = setNames(seq(0, 1, 0.1), paste(seq(0, 100, 10), "%")),
+                  selected = 1.0
                 )
               ),
               div(
                 class = "secondary-input",
-                sliderInput(
-                  "p_day_extra_charging",
+                selectInput(
+                  "p_day_extra_home_charging",
                   "Hur mycket laddar bilen mellan skift?",
-                  min = 0,
-                  max = 100,
-                  value = 0,
-                  step = 5,
-                  ticks = FALSE,
-                  post = "%"
+                  choices = setNames(seq(0, 1, 0.1), paste(seq(0, 100, 10), "%")),
+                  selected = 0
                 )
               )
             )
           )
         ),
-
+        
         ## Optional inputs ----
         div(
           class = "columns",
@@ -381,77 +372,46 @@ ui <- page_fluid(
               class = "frame-header",
               checkboxInput("o_include_charger", "Laddinfrastruktur")
             ),
-            div(
-              class = "frame-section secondary-inputs",
-              div(
-                class = "secondary-input",
-                numericInput(
-                  "p_charger_cost",
-                  "Installation",
-                  min = 0,
-                  max = 1500000,
-                  value = 250000,
-                  step = 10000
-                ),
-                p("kr")
-              ),
-              div(
-                class = "secondary-input",
-                numericInput(
-                  "p_net_cost",
-                  "Förstärkning elnät",
-                  min = 0,
-                  max = 1500000,
-                  value = 0,
-                  step = 10000
-                ),
-                p("kr")
-              ),
-              div(
-                class = "secondary-input",
-                numericInput(
-                  "p_charger_sharing_n",
-                  "Hur många fordon delar på laddaren?",
-                  min = 1, max = 20, step = 1, value = 1
-                )
-              )
-            )
+            uiOutput("charger_cost")
           ),
           div(
             class = "frame",
-
+            
             div(
               class = "frame-header",
-              checkboxInput("o_include_taxes", "Fordonsskatt")
+              checkboxInput("o_include_taxes", "Fordonsskatt och vägavgift")
             ),
+            uiOutput("taxes")
+          )
+        ),
+        div(
+          class = "columns",
+          
+          div(
+            class = "frame",
+            
             div(
-              class = "frame-section secondary-inputs",
-              div(
-                class = "secondary-input",
-                numericInput(
-                  "p_rollout_year",
-                  "År dieselbilen togs/tas i bruk",
-                  min = 2010,
-                  max = 2025,
-                  value = 2024,
-                  step = 1
-                )
-              ),
-              div(
-                class = "secondary-input",
-                selectInput(
-                  "p_fuel_type",
-                  "Bränsletyp",
-                  choices = c("Dieselbil", "Bensinbil"),
-                  selected = "Dieselbil"
-                )
-              )
-            )
+              class = "frame-header",
+              checkboxInput("o_include_service", "Service")
+            ),
+            uiOutput("service")
+          ),
+          div(
+            
+            class = "frame",
+            
+            div(
+              class = "frame-header",
+              checkboxInput("o_include_tires", "Däck")
+            ),
+            uiOutput("tires")
           )
         )
-
-        ## End ----
       )
+      
+      ## End ----
     )
   )
+  
+  # tableOutput("show_case_inputs")
 )
