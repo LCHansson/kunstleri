@@ -19,7 +19,7 @@ find_x0_in_glogis <- function(x, y, A = 1, k, nu = 1) {
 }
 
 fib <- function(n) {
-  if (n <= 1)!
+  if (n <= 1)
     return(1)
   else
     return(fib(n - 1) + fib(n - 2))
