@@ -1,6 +1,7 @@
-## Libs ----
+## Libraries ----
+
 library(tidyverse)
-library(ggpattern)
+
 
 ## Func ----
 generalized_logistic <- function(x, A = 1, k, x0, nu = 1, clean = TRUE) {
@@ -33,7 +34,7 @@ area_from_to <- function(k, A, nu, x_max, x0, from = 1, to = 100) {
 
 ## Model grid ----
 
-best_models <- function(case, n = 20, pdist = TRUE) {
+best_models <- function(case, n = 1, pdist = TRUE) {
   # best_models <- function(longer_driving_distance, shorter_driving_distance, frequency_above_typical_range, battery_size, electricity_per_10km, n = 20) {
   longer_distance <- case$longer_driving_distance
   dist_at_p <- case$shorter_driving_distance

@@ -1,9 +1,3 @@
-# case <- sensible_defaults
-# case_inputs <- case_inputs_global
-# case[names(case_inputs)] <- case_inputs
-
-
-
 
 create_sim_grid <- function(case) {
   
