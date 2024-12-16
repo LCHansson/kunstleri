@@ -1,5 +1,5 @@
 
-profitability_simulation <- function(case, optional_params) {
+profitability_simulation <- function(case) {
   ## Check prereqs
   if (is.null(case$sim_grid) || is.null(case$dists))
     stop()
@@ -43,13 +43,45 @@ profitability_simulation <- function(case, optional_params) {
   ## Optional parameters ----
   
   ## Charging infrastructure ----
+  if (isTRUE(case$opts$include_charger)) {
+    charger_added_cost <- list(ice = 0, bev = (case$charger_cost + case$grid_cost) / case$charger_sharing_n)
+  } else {
+    charger_added_cost <- list(ice = 0, bev = 0)
+  }
+  
+  ## Taxes and levies ----
+  if (isTRUE(case$opts$include_taxes)) {
+    taxes_added_cost <- case$taxes
+  } else {
+    taxes_added_cost <- list(ice = 0, bev = 0)
+  }
+  
+  ## Maintenance ----
+  if (isTRUE(case$opts$include_service)) {
+    maintenance_added_cost <- list(
+      ice = case$ice_service_cost * case$dist_model$area_total * case$number_of_operating_days / 10,
+      bev = case$bev_service_cost * case$dist_model$area_total * case$number_of_operating_days / 10
+    )
+  } else {
+    maintenance_added_cost <- list(ice = 0, bev = 0)
+  }
+  
+  ## Tires ----
+  if (isTRUE(case$opts$include_tires)) {
+    tires_added_cost <- list(
+      ice = case$ice_tire_cost * case$dist_model$area_total * case$number_of_operating_days / 10,
+      bev = case$ice_tire_cost * case$dist_model$area_total * case$number_of_operating_days / 10 * (1 + case$bev_tire_increase)
+    )
+  } else {
+    tires_added_cost <- list(ice = 0, bev = 0)
+  }
   
   
   
   ## Profitability ----
   
-  additional_ice_costs <- 0
-  additional_bev_costs <- 0
+  additional_ice_costs <- charger_added_cost$ice + taxes_added_cost$ice + maintenance_added_cost$ice + tires_added_cost$ice
+  additional_bev_costs <- charger_added_cost$bev + taxes_added_cost$bev + maintenance_added_cost$bev + tires_added_cost$bev
   
   case$sim_grid$bev_total_tco = case$bev_truck_cost - case$bev_climate_premium +
     (case$charger_cost + case$grid_cost) / case$charger_sharing_n +

@@ -10,6 +10,7 @@ source("api/func.R")
 source("api/sim_grid_refactor.R")
 source("api/model_selection.R")
 source("api/profitability_simulation.R")
+source("api/vehicle_tax.R")
 
 # Scoring
 source("api/profitability.R")
@@ -135,6 +136,7 @@ server <- function(input, output, session) {
         ## Do sim
         case <- create_sim_grid(case)
         case <- best_models(case)
+        case <- vehicle_tax(case)
         case <- profitability_simulation(case)
         
         case_global <<- case
@@ -558,77 +560,102 @@ server <- function(input, output, session) {
   
   
   output$taxes <- renderUI({
-    if (input$p_vehicle_class == "vehicle_class_lorry") {
-      res <- div(
-        class = "frame-section secondary-inputs",
-        div(
-          class = "secondary-input",
-          numericInput(
-            "p_ice_rollout_year",
-            "År dieselbilen togs/tas i bruk",
-            min = 2010,
-            max = 2025,
-            value = 2024,
-            step = 1
-          )
+    # if (input$p_vehicle_class == "van") {
+    res <- div(
+      class = "frame-section secondary-inputs",
+      div(
+        class = "secondary-input",
+        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "flex;", "none;")),
+        numericInput(
+          "p_ice_rollout_year",
+          "Första trafikår, bensin/dieselbil",
+          min = 2010,
+          max = 2025,
+          value = 2024,
+          step = 1
+        )
+      ),
+      div(
+        class = "secondary-input",
+        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "flex;", "none;")),
+        selectInput(
+          "p_fuel_type",
+          "Bränsletyp förbränningsmotor",
+          choices = c("Diesel" = "diesel", "Annat bränsle" = "ej diesel"),
+          selected = "Diesel"
+        )
+      ),
+      div(
+        class = "secondary-input",
+        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "flex;", "none;")),
+        numericInput(
+          "p_ice_co2_value",
+          "CO2-utsläpp bensin/dieselbil",
+          min = 10,
+          max = 1000,
+          value = 350,
+          step = 10
         ),
-        div(
-          class = "secondary-input",
-          selectInput(
-            "p_fuel_type",
-            "Bränsletyp förbränningsmotor",
-            choices = c("Diesel", "Bensin"),
-            selected = "Dieselbil"
-          )
+        p("/km")
+      ),
+      # )
+      # return(res)
+      # } else {
+      # res <- div(
+      # class = "frame-section secondary-inputs",
+      div(
+        class = "secondary-input",
+        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "none;", "flex;")),
+        numericInput(
+          "p_ice_weight",
+          "Totalvikt dieselbil",
+          min = 3.5,
+          max = 64,
+          value = 16,
+          step = 0.5
         ),
-        div(
-          class = "secondary-input",
-          numericInput(
-            "p_ice_co2_value",
-            "CO2-utsläpp bensin/dieselbil",
-            min = 10,
-            max = 1000,
-            value = 350,
-            step = 10
-          ),
-          p("/km")
+        p("ton")
+      ),
+      div(
+        class = "secondary-input",
+        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "none;", "flex;")),
+        numericInput(
+          "p_num_axles",
+          "Antal axlar",
+          min = 2,
+          max = 5,
+          value = 3,
+          step = 1
+        )
+      ),
+      div(
+        class = "secondary-input",
+        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "none;", "flex;")),
+        selectInput(
+          "p_trailer_type",
+          "Draganordning",
+          choices = c("Dragbil" = "dragbil", "Ingen" = "utan", "Annat påhäng" = "annan"),
+          selected = "utan"
+        )
+      ),
+      div(
+        class = "secondary-input",
+        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "none;", "flex;")),
+        selectInput(
+          "p_road_toll_duty",
+          "Vägavgiftspliktig",
+          choices = c("Ja" = "ja", "Nej" = "nej"),
+          selected = "ja"
         )
       )
-      return(res)
-    } else {
-      res <- div(
-        class = "frame-section secondary-inputs",
-        div(
-          class = "secondary-input",
-          numericInput(
-            "p_ice_weight",
-            "Totalvikt dieselbil",
-            min = 3.5,
-            max = 64,
-            value = 16,
-            step = 0.5
-          ),
-          p("ton")
-        ),
-        div(
-          class = "secondary-input",
-          numericInput(
-            "p_num_axles",
-            "Antal axlar",
-            min = 2,
-            max = 6,
-            value = 3,
-            step = 1
-          )
-        )
-      )
-      return(res)
-    }
+    )
+    return(res)
+    # }
   })
   
   
   output$service <- renderUI({
-    if (input$p_vehicle_class == "vehicle_class_lorry") {
+    if (input$p_vehicle_class == "van") {
       res <- div(
         class = "frame-section secondary-inputs",
         div(

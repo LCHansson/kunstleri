@@ -35,10 +35,10 @@ ui <- page_fluid(
             "p_vehicle_class",
             NULL,
             choices = c(
-              "Lätt lastbil" = "vehicle_class_lorry",
-              "Tung lastbil" = "vehicle_class_truck"
+              "Lätt lastbil" = "van",
+              "Tung lastbil" = "truck"
             ),
-            selected = "vehicle_class_truck",
+            selected = "truck",
             inline = TRUE
           ),
           
