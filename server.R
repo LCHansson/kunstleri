@@ -138,6 +138,8 @@ server <- function(input, output, session) {
         case <- profitability_simulation(case)
         
         case_global <<- case
+        
+        case$warning <- 1
       # })
       return(case)
     } else {
@@ -333,19 +335,6 @@ server <- function(input, output, session) {
   })
   
   
-  observe({
-    case <- CaseData()
-    
-    if (!is.null(case$warning)) {
-      insertUI(
-        "#calculator-bar-id",
-        where = "afterEnd",
-        ui = uiOutput("profitability_warning")
-      )
-    }
-  })
-  
-  
   output$bev_cost_analysis <- renderUI({
     coverage <- CaseCoverage()
     
@@ -482,7 +471,7 @@ server <- function(input, output, session) {
       x$sim_grid$total_private_electricity_cost[[1]] +
       x$sim_grid$total_public_electricity_cost[[1]]
     
-    bev_to_ice_ratio_diff <- bev_tco/ice_tco - 1
+    bev_to_ice_ratio_diff <- bev_tco / ice_tco - 1
     
     if (!"include_public_charging" %in% x$charge_modes && x$longer_driving_distance > x$dist_model$battery_capacity_km) {
       warning_header <- tagList(tags$div(
@@ -512,9 +501,17 @@ server <- function(input, output, session) {
   })
   
   output$profitability_warning <- renderUI({
+    case <- CaseData()
+    
+    if (!is.null(case$warning))
+      display_warning <- "block"
+    else
+      display_warning <- "none"
+      
     div(
       class = "calculator-element-block",
       div(
+        style = glue::glue("display: {display_warning};"),
         class = "cost-warning",
         "Hej"
       )

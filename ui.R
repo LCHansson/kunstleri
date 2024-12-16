@@ -220,7 +220,8 @@ ui <- page_fluid(
         div(
           class = "result-graph",
           id = "calculator-bar-id",
-          uiOutput("tco_comparison_bars_ui")
+          uiOutput("tco_comparison_bars_ui"),
+          uiOutput("profitability_warning")
         ),
         
         ## Secondary inputs ----
