@@ -1,9 +1,18 @@
+## Libs ----
 library(shiny)
-# library(tidyverse)
 library(bslib)
 library(bsicons)
 
+
+## inputs ----
+source("api/numericInputWithUnit.R")
+
+
+## UI ----
+
 ui <- page_fluid(
+  shinyjs::useShinyjs(),
+  
   # theme = bs_theme(),
   # title = "TF BETARELEASE: TCO-jämförelse", lang = "sv",
   
@@ -14,9 +23,6 @@ ui <- page_fluid(
     tags$title("Elektrifieringskollen"),
     tags$meta(name = "viewport", content = "width = device-width, initial-scale = 1")
   ),
-  
-  uiOutput("tco_css"),
-  
   
   div(
     class = "app-layout",
@@ -186,23 +192,27 @@ ui <- page_fluid(
         )
       ),
       
-      ## Result ----
+      ## Empty state ----
+      
       div(
-        class = "result",
-        
-        ## Empty state ----
+        id = "empty-state",
+        class = "empty-state",
         div(
-          id = "hide-calculator",
-          class = "empty-state",
-          div(
-            class = "empty-state-heading",
-            "Fyll i värden för att beräkna kostnaden"
-          ),
-          div(
-            class = "empty-state-text",
-            "Har du inga siffror framför dig just nu? Testa ett scenario längst ner till vänster."
-          )
+          class = "empty-state-heading",
+          "Fyll i värden för att beräkna kostnaden"
         ),
+        div(
+          class = "empty-state-text",
+          "Har du inga siffror framför dig just nu? Testa ett scenario längst ner till vänster."
+        )
+      ),
+      
+      
+      ## Result ----
+      shinyjs::hidden(div(
+        class = "result",
+        id = "result",
+        # style = "display: none;",
         
         ## Result header ----
         div(
@@ -409,7 +419,7 @@ ui <- page_fluid(
             uiOutput("tires")
           )
         )
-      )
+      ))
       
       ## End ----
     )

@@ -39,7 +39,8 @@ server <- function(input, output, session) {
       if (input$run_sim_button > 0) {
         
         # if(ValidateInputs()) {
-        removeUI("#hide-calculator")
+        shinyjs::hide("empty-state")
+        shinyjs::show("result")
         ui_is_visible <<- TRUE
         # }
         message("ui_is_visible == ", ui_is_visible)
@@ -435,6 +436,7 @@ server <- function(input, output, session) {
   
   
   ## UI elements ----
+  
   
   output$scoring_header <- renderUI({
     x <- CaseData()
