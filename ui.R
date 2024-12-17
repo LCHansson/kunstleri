@@ -8,7 +8,8 @@ ui <- page_fluid(
   # title = "TF BETARELEASE: TCO-jämförelse", lang = "sv",
   
   tags$head(
-    # tags$link(rel = "stylesheet", type = "text/css", href = "assets/stylesheets/reboot_style.css"),
+    tags$link(rel = "stylesheet", type = "text/css", href = paste0("assets/stylesheets/style.css?", lubridate::seconds(Sys.time()))),
+    # tags$link(rel = "stylesheet", type = "text/css", href = "assets/stylesheets/style.css"),
     tags$meta(charset = "UTF-8"),
     tags$title("Elektrifieringskollen"),
     tags$meta(name = "viewport", content = "width = device-width, initial-scale = 1")

@@ -29,20 +29,6 @@ case_global <<- NULL
 
 server <- function(input, output, session) {
   
-  
-  ## dev CSS ----
-  
-  output$tco_css <- renderUI({
-    tags$head(
-      tags$style(
-        HTML(
-          paste0(c(readLines("www/assets/stylesheets/style.css")))
-        )
-      )
-    )
-  })
-  
-  
   ## Empty state ----
   
   observe({
