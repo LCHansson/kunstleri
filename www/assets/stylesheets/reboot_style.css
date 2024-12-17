@@ -422,14 +422,9 @@ img {
 .tco-component {
   display: block;
   position: relative;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
   
+  border: 1px solid white;
   border-radius: 5px;
-  margin-top: 1px;
-  margin-bottom: 1px;
 }
 
 .tco-component-vehicle {
