@@ -36,7 +36,7 @@ server <- function(input, output, session) {
     tags$head(
       tags$style(
         HTML(
-          paste0(c(readLines("www/assets/stylesheets/reboot_style.css")))
+          paste0(c(readLines("www/assets/stylesheets/style.css")))
         )
       )
     )
