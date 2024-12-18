@@ -370,7 +370,17 @@ ui <- page_fluid(
                   choices = setNames(seq(0, 1, 0.1), paste(seq(0, 100, 10), "%")),
                   selected = 0
                 )
+              ),
+              div(
+                class = "secondary-input",
+                selectInput(
+                  "p_public_charging_availability",
+                  "Kan bilen ladda publikt vid behov?",
+                  choices = c("Ja" = "ja", "Nej" = "nej"),
+                  selected = "ja"
+                )
               )
+              
             )
           )
         ),
