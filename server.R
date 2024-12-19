@@ -1,5 +1,6 @@
 ## Libs ----
 library(shiny)
+library(shinyjs)
 
 ## Helpers ----
 # App helpers
@@ -50,23 +51,50 @@ server <- function(input, output, session) {
   })
   
   
+  ## Vehicle class switch ----
+  observe({
+    input$p_vehicle_class
+    
+    isolate({
+      
+      if (input$p_vehicle_class == "van") {
+        show("ice_rollout_year")
+        show("fuel_type")
+        show("ice_co2_value")
+        hide("ice_weight")
+        hide("num_axles")
+        hide("trailer_type")
+        hide("road_toll_duty")
+      } else {
+        hide("ice_rollout_year")
+        hide("fuel_type")
+        hide("ice_co2_value")
+        show("ice_weight")
+        show("num_axles")
+        show("trailer_type")
+        show("road_toll_duty")
+      }
+    })
+  })
+  
+  
   ## Case data ----
   
   CaseInputs <- reactive({
     input$run_sim_button
     
     # isolate({
-      all_inputs <- reactiveValuesToList(input)
-      all_inputs$p_charge_modes <- input$p_charge_modes
-      test_cbgi <<- input$p_charge_modes
-      
-      all_inputs <- all_inputs[order(names(all_inputs))]
-      # x <- x |> purrr::discard(stringr::str_detect(names(x), "button"))
-      params <- all_inputs |> purrr::keep(stringr::str_detect(names(all_inputs), "^p_"))
-      names(params) <- stringr::str_remove(names(params), "^p_")
-      
-      params$opts <- all_inputs |> purrr::keep(stringr::str_detect(names(all_inputs), "^o_"))
-      names(params$opts) <- stringr::str_remove(names(params$opts), "^o_")
+    all_inputs <- reactiveValuesToList(input)
+    all_inputs$p_charge_modes <- input$p_charge_modes
+    test_cbgi <<- input$p_charge_modes
+    
+    all_inputs <- all_inputs[order(names(all_inputs))]
+    # x <- x |> purrr::discard(stringr::str_detect(names(x), "button"))
+    params <- all_inputs |> purrr::keep(stringr::str_detect(names(all_inputs), "^p_"))
+    names(params) <- stringr::str_remove(names(params), "^p_")
+    
+    params$opts <- all_inputs |> purrr::keep(stringr::str_detect(names(all_inputs), "^o_"))
+    names(params$opts) <- stringr::str_remove(names(params$opts), "^o_")
     # })
     
     params
@@ -76,19 +104,19 @@ server <- function(input, output, session) {
     # input$run_sim_button
     
     # isolate({
-      primary_inputs <- c(
-        "p_diesel_truck_cost",
-        "p_bev_truck_cost",
-        "p_bev_climate_premium",
-        "p_battery_size",
-        "p_shorter_driving_distance",
-        "p_longer_driving_distance",
-        "p_frequency_above_typical_range",
-        "p_charge_modes"
-      )
-      
-      input_vals <- map(primary_inputs, function(i) input[[i]])
-      # input_vals_global <<- map(primary_inputs, function(i) input[[i]])
+    primary_inputs <- c(
+      "p_diesel_truck_cost",
+      "p_bev_truck_cost",
+      "p_bev_climate_premium",
+      "p_battery_size",
+      "p_shorter_driving_distance",
+      "p_longer_driving_distance",
+      "p_frequency_above_typical_range",
+      "p_charge_modes"
+    )
+    
+    input_vals <- map(primary_inputs, function(i) input[[i]])
+    # input_vals_global <<- map(primary_inputs, function(i) input[[i]])
     # })
     
     if (any(is.na(input_vals)) || any(is.null(input_vals)))
@@ -105,30 +133,30 @@ server <- function(input, output, session) {
     if (ValidateInputs()) {
       
       # isolate({
-        ## Get case params
-        case <- sensible_defaults
-        
-        case_inputs <- CaseInputs()
-        
-        # Pre-processing to deal with selectInput() returning character instead of numeric
-        case_inputs$frequency_above_typical_range <- as.numeric(case_inputs$frequency_above_typical_range)
-        case_inputs$night_charging <- as.numeric(case_inputs$night_charging)
-        case_inputs$day_extra_home_charging <- as.numeric(case_inputs$day_extra_home_charging)
-        case_inputs$bev_tire_increase <- as.numeric(case_inputs$bev_tire_increase)
-        
-        case_inputs_global <<- case_inputs
-        
-        case[names(case_inputs)] <- case_inputs
-        
-        ## Do sim
-        case <- create_sim_grid(case)
-        case <- best_models(case)
-        case <- vehicle_tax(case)
-        case <- profitability_simulation(case)
-        
-        case_global <<- case
-        
-        case$warning <- 1
+      ## Get case params
+      case <- sensible_defaults
+      
+      case_inputs <- CaseInputs()
+      
+      # Pre-processing to deal with selectInput() returning character instead of numeric
+      case_inputs$frequency_above_typical_range <- as.numeric(case_inputs$frequency_above_typical_range)
+      case_inputs$night_charging <- as.numeric(case_inputs$night_charging)
+      case_inputs$day_extra_home_charging <- as.numeric(case_inputs$day_extra_home_charging)
+      case_inputs$bev_tire_increase <- as.numeric(case_inputs$bev_tire_increase)
+      
+      case_inputs_global <<- case_inputs
+      
+      case[names(case_inputs)] <- case_inputs
+      
+      ## Do sim
+      case <- create_sim_grid(case)
+      case <- best_models(case)
+      case <- vehicle_tax(case)
+      case <- profitability_simulation(case)
+      
+      case_global <<- case
+      
+      case$warning <- 1
       # })
       return(case)
     } else {
@@ -499,7 +527,7 @@ server <- function(input, output, session) {
       display_warning <- "block"
     else
       display_warning <- "none"
-      
+    
     div(
       class = "calculator-element-block",
       div(
@@ -509,102 +537,6 @@ server <- function(input, output, session) {
       )
     )
   })
-  
-  
-  output$taxes <- renderUI({
-    # if (input$p_vehicle_class == "van") {
-    res <- div(
-      class = "frame-section secondary-inputs",
-      div(
-        class = "secondary-input",
-        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "flex;", "none;")),
-        numericInput(
-          "p_ice_rollout_year",
-          "Första trafikår, bensin/dieselbil",
-          min = 2010,
-          max = 2025,
-          value = 2024,
-          step = 1
-        )
-      ),
-      div(
-        class = "secondary-input",
-        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "flex;", "none;")),
-        selectInput(
-          "p_fuel_type",
-          "Bränsletyp förbränningsmotor",
-          choices = c("Diesel" = "diesel", "Annat bränsle" = "ej diesel"),
-          selected = "Diesel"
-        )
-      ),
-      div(
-        class = "secondary-input",
-        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "flex;", "none;")),
-        numericInput(
-          "p_ice_co2_value",
-          "CO2-utsläpp bensin/dieselbil",
-          min = 10,
-          max = 1000,
-          value = 350,
-          step = 10
-        ),
-        p("/km")
-      ),
-      # )
-      # return(res)
-      # } else {
-      # res <- div(
-      # class = "frame-section secondary-inputs",
-      div(
-        class = "secondary-input",
-        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "none;", "flex;")),
-        numericInput(
-          "p_ice_weight",
-          "Totalvikt dieselbil",
-          min = 3.5,
-          max = 64,
-          value = 16,
-          step = 0.5
-        ),
-        p("ton")
-      ),
-      div(
-        class = "secondary-input",
-        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "none;", "flex;")),
-        numericInput(
-          "p_num_axles",
-          "Antal axlar",
-          min = 2,
-          max = 5,
-          value = 3,
-          step = 1
-        )
-      ),
-      div(
-        class = "secondary-input",
-        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "none;", "flex;")),
-        selectInput(
-          "p_trailer_type",
-          "Draganordning",
-          choices = c("Dragbil" = "dragbil", "Ingen" = "utan", "Annat påhäng" = "annan"),
-          selected = "utan"
-        )
-      ),
-      div(
-        class = "secondary-input",
-        style = paste0("display: ", if_else(input$p_vehicle_class == "van", "none;", "flex;")),
-        selectInput(
-          "p_road_toll_duty",
-          "Vägavgiftspliktig",
-          choices = c("Ja" = "ja", "Nej" = "nej"),
-          selected = "ja"
-        )
-      )
-    )
-    return(res)
-    # }
-  })
-  
   
   
   ## Display inputs (debugging) ----

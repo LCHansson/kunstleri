@@ -443,6 +443,7 @@ ui <- page_fluid(
             div(
               class = "frame-section secondary-inputs",
               shinyjs::hidden(div(
+                id = "ice_rollout_year",
                 class = "secondary-input",
                 numericInput(
                   "p_ice_rollout_year",
@@ -454,6 +455,7 @@ ui <- page_fluid(
                 )
               )),
               shinyjs::hidden(div(
+                id = "fuel_type",
                 class = "secondary-input",
                 selectInput(
                   "p_fuel_type",
@@ -463,30 +465,33 @@ ui <- page_fluid(
                 )
               )),
               shinyjs::hidden(div(
+                id = "ice_co2_value",
                 class = "secondary-input",
-                numericInput(
+                numericInputWithUnit(
                   "p_ice_co2_value",
                   "CO2-utsläpp bensin/dieselbil",
                   min = 10,
                   max = 1000,
                   value = 350,
-                  step = 10
-                ),
-                p("/km")
+                  step = 10,
+                  unit = "/km"
+                )
               )),
               div(
+                id = "ice_weight",
                 class = "secondary-input",
-                numericInput(
+                numericInputWithUnit(
                   "p_ice_weight",
                   "Totalvikt dieselbil",
                   min = 3.5,
                   max = 64,
                   value = 16,
-                  step = 0.5
-                ),
-                p("ton")
+                  step = 0.5,
+                  unit = "ton"
+                )
               ),
               div(
+                id = "num_axles",
                 class = "secondary-input",
                 numericInput(
                   "p_num_axles",
@@ -498,6 +503,7 @@ ui <- page_fluid(
                 )
               ),
               div(
+                id = "trailer_type",
                 class = "secondary-input",
                 selectInput(
                   "p_trailer_type",
@@ -507,6 +513,7 @@ ui <- page_fluid(
                 )
               ),
               div(
+                id = "road_toll_duty",
                 class = "secondary-input",
                 selectInput(
                   "p_road_toll_duty",
