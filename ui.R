@@ -160,7 +160,7 @@ ui <- page_fluid(
             selectize = TRUE
           ),
           
-          checkboxGroupInput(
+          shinyjs::hidden(checkboxGroupInput(
             "p_charge_modes", 
             label = NULL,
             inline = TRUE,
@@ -168,7 +168,7 @@ ui <- page_fluid(
             choiceValues = list("include_private_charging", "include_public_charging"),
             choiceNames = list("Har tillgång till depåladdare", "Kan ladda publikt vid behov"),
             selected = c("include_public_charging", "include_private_charging")
-          )
+          ))
         ),
         
         actionButton("run_sim_button", "Beräkna", class = "btn-primary"),
@@ -263,7 +263,7 @@ ui <- page_fluid(
                 "p_private_charging_cost",
                 "Pris depåladdning per kWh",
                 min = 0.2,
-                max = 2.5,
+                max = 5,
                 value = 1.1,
                 step = 0.1,
                 ticks = FALSE,
@@ -277,7 +277,7 @@ ui <- page_fluid(
                 "p_public_charging_cost",
                 "Pris snabbladdning per kWh",
                 min = 1,
-                max = 6,
+                max = 10,
                 value = 4.5,
                 step = 0.25,
                 ticks = FALSE,

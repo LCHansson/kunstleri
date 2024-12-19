@@ -42,6 +42,7 @@ server <- function(input, output, session) {
         # if(ValidateInputs()) {
         shinyjs::hide("empty-state")
         shinyjs::show("result")
+        shinyjs::hide("run_sim_button")
         ui_is_visible <<- TRUE
         # }
         message("ui_is_visible == ", ui_is_visible)
