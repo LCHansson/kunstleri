@@ -80,11 +80,17 @@ profitability_simulation <- function(case) {
   
   ## Profitability ----
   
+  case$sim_grid$additional_costs <- list(
+    charger_added_cost = charger_added_cost,
+    taxes_added_cost = taxes_added_cost,
+    maintenance_added_cost = maintenance_added_cost,
+    tires_added_cost = tires_added_cost
+  )
+  
   additional_ice_costs <- charger_added_cost$ice + taxes_added_cost$ice + maintenance_added_cost$ice + tires_added_cost$ice
   additional_bev_costs <- charger_added_cost$bev + taxes_added_cost$bev + maintenance_added_cost$bev + tires_added_cost$bev
   
   case$sim_grid$bev_total_tco = case$bev_truck_cost - case$bev_climate_premium +
-    (case$charger_cost + case$grid_cost) / case$charger_sharing_n +
     case$sim_grid$total_private_electricity_cost +
     case$sim_grid$total_public_electricity_cost +
     additional_bev_costs
