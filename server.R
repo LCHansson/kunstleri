@@ -175,42 +175,32 @@ server <- function(input, output, session) {
     
     # conf_interval <- c(lower = 0.05, higher = 0.95)
     
-    cost_params <- tibble( 
-      ice = case$diesel_truck_cost,
-      diesel = case$sim_grid$total_diesel_cost,
-      bev = case$bev_truck_cost,
-      charger = case$sim_grid$charger_cost,
+    max_bar_height <- max(case$sim_grid$bev_total_tco, case$sim_grid$ice_total_tco)
+    
+    ice_height_shares <- c(
+      vehicle = case$diesel_truck_cost,
+      fuel = case$sim_grid$total_diesel_cost,
+      taxes = case$sim_grid$additional_costs$taxes_added_cost$ice,
+      maintenance = case$sim_grid$additional_costs$maintenance_added_cost$ice,
+      tires = case$sim_grid$additional_costs$tires_added_cost$ice
+    ) / max_bar_height * 100
+    
+    bev_height_shares <- c(
+      vehicle = case$bev_truck_cost - case$bev_climate_premium,
       private_charging = case$sim_grid$total_private_electricity_cost,
-      public_charging = case$sim_grid$total_public_electricity_cost
-    ) |> 
-      pivot_longer(cols = everything()) |> 
-      mutate(
-        category = c(0, 0, 1, 1, 1, 1)
-      ) |> 
-      mutate(
-        grp_share = value / sum(value),
-        grp_sum = sum(value),
-        .by = "category"
+      public_charging = case$sim_grid$total_public_electricity_cost,
+      charging_infrastructure = case$sim_grid$additional_costs$charger_added_cost$bev,
+      taxes = case$sim_grid$additional_costs$taxes_added_cost$bev,
+      maintenance = case$sim_grid$additional_costs$maintenance_added_cost$bev,
+      tires = case$sim_grid$additional_costs$tires_added_cost$bev
+    ) / max_bar_height * 100
+    
+    
+    return(
+      list(
+        ice_height_shares = ice_height_shares,
+        bev_height_shares = bev_height_shares
       )
-    
-    
-    ## Div heights
-    div_list <- cost_params |> 
-      mutate(
-        # bar_height = grp_sum / max(grp_sum) * total_height,
-        bar_height = grp_sum / max(grp_sum),
-        div_height = grp_share * bar_height * 100
-      ) |> 
-      select(name, div_height) |>
-      as.list()
-    
-    # div_heights <- round_preserve_sum(div_list$div_height)
-    div_heights <- div_list$div_height
-    names(div_heights) <- div_list$name
-    
-    
-    list(
-      div_heights = div_heights
     )
   })
   
@@ -239,7 +229,7 @@ server <- function(input, output, session) {
   output$tco_comparison_bars_ui <- renderUI({
     case <- CaseData()
     if (is.null(case)) return(NULL)
-    div_heights <- BarHeights()$div_heights
+    div_heights <- BarHeights()
     div_heights_global <<- div_heights
     
     div(
@@ -253,22 +243,49 @@ server <- function(input, output, session) {
           class = "tco-components",
           div(
             class = "tco-component tco-component-diesel",
-            style = glue::glue("height: {div_heights[['diesel']]}%;"),
+            style = glue::glue("height: {div_heights$ice_height_shares[['fuel']]}%;"),
             div(
               class = "tco-component-label right",
-              style = if (div_heights[['diesel']] == 0) "display: none;" else "",
+              style = if (div_heights$ice_height_shares[['fuel']] == 0) "display: none;" else "",
               "Diesel"
             )
           ),
           div(
             class = "tco-component tco-component-vehicle",
-            style = glue::glue("height: {div_heights[['ice']]}%;"),
+            style = glue::glue("height: {div_heights$ice_height_shares[['vehicle']]}%;"),
             div(
               class =  "tco-component-shape"
             ),
             div(
               class = "tco-component-label right",
               "Fordon"
+            )
+          ),
+          div(
+            class = "tco-component tco-component-vehicle",
+            style = glue::glue("height: {div_heights$ice_height_shares[['taxes']]}%;"),
+            div(
+              class = "tco-component-label right",
+              style = if (div_heights$ice_height_shares[['taxes']] == 0) "display: none;" else "",
+              "Skatt och avgifter"
+            )
+          ),
+          div(
+            class = "tco-component tco-component-vehicle",
+            style = glue::glue("height: {div_heights$ice_height_shares[['maintenance']]}%;"),
+            div(
+              class = "tco-component-label right",
+              style = if (div_heights$ice_height_shares[['maintenance']] == 0) "display: none;" else "",
+              "Service"
+            )
+          ),
+          div(
+            class = "tco-component tco-component-vehicle",
+            style = glue::glue("height: {div_heights$ice_height_shares[['tires']]}%;"),
+            div(
+              class = "tco-component-label right",
+              style = if (div_heights$ice_height_shares[['tires']] == 0) "display: none;" else "",
+              "Däck"
             )
           )
         ),
@@ -291,52 +308,91 @@ server <- function(input, output, session) {
           class = "tco-components",
           div(
             class = "tco-component tco-component-public-charging",
-            style = if(div_heights[['public_charging']] != 0) {
-              glue::glue("height: {div_heights[['public_charging']]}%;")
+            style = if (div_heights$bev_height_shares[['public_charging']] != 0) {
+              glue::glue("height: {div_heights$bev_height_shares[['public_charging']]}%;")
             } else {
               "display: none; margin: 0; padding: 0;"
             },
             div(
               class = "tco-component-label left",
-              style = if(div_heights[['public_charging']] == 0) "display: none;" else "",
+              style = if (div_heights$bev_height_shares[['public_charging']] == 0) "display: none;" else "",
               "Snabbladdning"
             )
           ),
           div(
             class = "tco-component tco-component-private-charging",
-            style = if(div_heights[['private_charging']] != 0) {
-              glue::glue("height: {div_heights[['private_charging']]}%;")
+            style = if (div_heights$bev_height_shares[['private_charging']] != 0) {
+              glue::glue("height: {div_heights$bev_height_shares[['private_charging']]}%;")
             } else {
               "display: none; margin: 0; padding: 0;"
             },
             div(
               class = "tco-component-label left",
-              style = if (div_heights[['private_charging']] == 0) "display: none;" else "",
+              style = if (div_heights$bev_height_shares[['private_charging']] == 0) "display: none;" else "",
               "Depåladdning"
             )
           ),
           div(
-            class = "tco-component tco-component-charger",
-            style = if(div_heights[['charger']] != 0) {
-              glue::glue("height: {div_heights[['charger']]}%;")
-            } else {
-              "display: none; margin: 0; padding: 0;"
-            },
-            div(
-              class = "tco-component-label left",
-              style = if (div_heights[['charger']] == 0) "display: none;" else "",
-              "Laddinfra"
-            )
-          ),
-          div(
             class = "tco-component tco-component-vehicle",
-            style = glue::glue("height: {div_heights[['bev']]}%;"),
+            style = glue::glue("height: {div_heights$bev_height_shares[['vehicle']]}%;"),
             div(
               class =  "tco-component-shape"
             ),
             div(
               class = "tco-component-label left",
               "Fordon"
+            )
+          ),
+          div(
+            class = "tco-component tco-component-charger",
+            style = if (div_heights$bev_height_shares[['charging_infrastructure']] != 0) {
+              glue::glue("height: {div_heights$bev_height_shares[['charging_infrastructure']]}%;")
+            } else {
+              "display: none; margin: 0; padding: 0;"
+            },
+            div(
+              class = "tco-component-label left",
+              style = if (div_heights$bev_height_shares[['charging_infrastructure']] == 0) "display: none;" else "",
+              "Laddinfra"
+            )
+          ),
+          div(
+            class = "tco-component tco-component-charger",
+            style = if (div_heights$bev_height_shares[['taxes']] != 0) {
+              glue::glue("height: {div_heights$bev_height_shares[['taxes']]}%;")
+            } else {
+              "display: none; margin: 0; padding: 0;"
+            },
+            div(
+              class = "tco-component-label left",
+              style = if (div_heights$bev_height_shares[['taxes']] == 0) "display: none;" else "",
+              "Skatt och avgifter"
+            )
+          ),
+          div(
+            class = "tco-component tco-component-charger",
+            style = if (div_heights$bev_height_shares[['maintenance']] != 0) {
+              glue::glue("height: {div_heights$bev_height_shares[['maintenance']]}%;")
+            } else {
+              "display: none; margin: 0; padding: 0;"
+            },
+            div(
+              class = "tco-component-label left",
+              style = if (div_heights$bev_height_shares[['maintenance']] == 0) "display: none;" else "",
+              "Service"
+            )
+          ),
+          div(
+            class = "tco-component tco-component-charger",
+            style = if (div_heights$bev_height_shares[['tires']] != 0) {
+              glue::glue("height: {div_heights$bev_height_shares[['tires']]}%;")
+            } else {
+              "display: none; margin: 0; padding: 0;"
+            },
+            div(
+              class = "tco-component-label left",
+              style = if (div_heights$bev_height_shares[['tires']] == 0) "display: none;" else "",
+              "Däck"
             )
           )
         ),
