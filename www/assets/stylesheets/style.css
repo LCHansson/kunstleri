@@ -383,23 +383,33 @@ img {
   align-items: center;
   justify-content: center;
 }
+
+.result-graph > * {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
   
 .tco-graph {
+  width: 50%;
+  max-width: 300px;
   display: flex;
   flex-direction: row;
-  column-gap: 24px;
+  gap: 24px;
   align-items: center;
   justify-content: center;
 }
 
 .tco-bar {
-    display: flex;
-    width: 120px;
-    height: 100%;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: stretch;
-    row-gap: 8px;
+  display: flex;
+  height: 100%;
+  width: calc((100% - 24px) / 2);
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
+  gap: 8px;
 }
 
 .tco-components {
@@ -409,7 +419,7 @@ img {
   justify-content: flex-end;
   align-items: stretch;
   height: 200px;
-  width: 120px;
+  width: 100%;
 }
 
 .tco-component {
