@@ -388,45 +388,206 @@ ui <- page_fluid(
         ## Optional inputs ----
         div(
           class = "columns",
+          
+          ## Charging infrastructure ----
           div(
             class = "frame",
             div(
               class = "frame-header",
               checkboxInput("o_include_charger", "Laddinfrastruktur")
             ),
-            uiOutput("charger_cost")
+            div(
+              class = "frame-section secondary-inputs",
+              div(
+                class = "secondary-input",
+                numericInput(
+                  "p_charger_cost",
+                  "Installation laddare",
+                  min = 0,
+                  max = 1500000,
+                  value = 250000,
+                  step = 10000
+                ),
+                p("kr")
+              ),
+              div(
+                class = "secondary-input",
+                numericInput(
+                  "p_grid_cost",
+                  "Förstärkning elnät",
+                  min = 0,
+                  max = 1500000,
+                  value = 0,
+                  step = 10000
+                ),
+                p("kr")
+              ),
+              div(
+                class = "secondary-input",
+                numericInput(
+                  "p_charger_sharing_n",
+                  "Hur många fordon delar på laddaren?",
+                  min = 1, max = 20, step = 1, value = 1
+                )
+              )
+            )        
           ),
+          
+          ## Taxes ----
           div(
             class = "frame",
-            
             div(
               class = "frame-header",
               checkboxInput("o_include_taxes", "Fordonsskatt och vägavgift")
             ),
-            uiOutput("taxes")
+            div(
+              class = "frame-section secondary-inputs",
+              shinyjs::hidden(div(
+                class = "secondary-input",
+                numericInput(
+                  "p_ice_rollout_year",
+                  "Första trafikår, bensin/dieselbil",
+                  min = 2010,
+                  max = 2025,
+                  value = 2024,
+                  step = 1
+                )
+              )),
+              shinyjs::hidden(div(
+                class = "secondary-input",
+                selectInput(
+                  "p_fuel_type",
+                  "Bränsletyp förbränningsmotor",
+                  choices = c("Diesel" = "diesel", "Annat bränsle" = "ej diesel"),
+                  selected = "Diesel"
+                )
+              )),
+              shinyjs::hidden(div(
+                class = "secondary-input",
+                numericInput(
+                  "p_ice_co2_value",
+                  "CO2-utsläpp bensin/dieselbil",
+                  min = 10,
+                  max = 1000,
+                  value = 350,
+                  step = 10
+                ),
+                p("/km")
+              )),
+              div(
+                class = "secondary-input",
+                numericInput(
+                  "p_ice_weight",
+                  "Totalvikt dieselbil",
+                  min = 3.5,
+                  max = 64,
+                  value = 16,
+                  step = 0.5
+                ),
+                p("ton")
+              ),
+              div(
+                class = "secondary-input",
+                numericInput(
+                  "p_num_axles",
+                  "Antal axlar",
+                  min = 2,
+                  max = 5,
+                  value = 3,
+                  step = 1
+                )
+              ),
+              div(
+                class = "secondary-input",
+                selectInput(
+                  "p_trailer_type",
+                  "Draganordning",
+                  choices = c("Dragbil" = "dragbil", "Ingen" = "utan", "Annat påhäng" = "annan"),
+                  selected = "utan"
+                )
+              ),
+              div(
+                class = "secondary-input",
+                selectInput(
+                  "p_road_toll_duty",
+                  "Vägavgiftspliktig",
+                  choices = c("Ja" = "ja", "Nej" = "nej"),
+                  selected = "ja"
+                )
+              )
+            )    
           )
         ),
         div(
           class = "columns",
           
+          ## Maintenance ----
           div(
             class = "frame",
-            
             div(
               class = "frame-header",
               checkboxInput("o_include_service", "Service")
             ),
-            uiOutput("service")
+            div(
+              class = "frame-section secondary-inputs",
+              div(
+                class = "secondary-input",
+                numericInput(
+                  "p_ice_service_cost",
+                  "Servicekostnad per mil, bensin/dieselbil",
+                  min = 1,
+                  max = 25,
+                  value = 8,
+                  step = 0.5
+                ),
+                p("kr")
+              ),
+              div(
+                class = "secondary-input",
+                numericInput(
+                  "p_bev_service_cost",
+                  "Servicekostnad per mil, elbil",
+                  min = 1,
+                  max = 25,
+                  value = 7.5,
+                  step = 0.5
+                ),
+                p("kr")
+              )
+            )   
           ),
+          
+          ## Tires ----
           div(
-            
             class = "frame",
-            
             div(
               class = "frame-header",
               checkboxInput("o_include_tires", "Däck")
             ),
-            uiOutput("tires")
+            div(
+              class = "frame-section secondary-inputs",
+              div(
+                class = "secondary-input",
+                numericInput(
+                  "p_ice_tire_cost",
+                  "Däckkostnad per mil, diesel/bensinbil",
+                  min = 0,
+                  max = 10,
+                  value = 5,
+                  step = 0.1
+                ),
+                p("kr")
+              ),
+              div(
+                class = "secondary-input",
+                selectInput(
+                  "p_bev_tire_increase",
+                  "Ökat däckslitage med elbil",
+                  choices = setNames(seq(0, 1, 0.1), paste(seq(0, 100, 10), "%")),
+                  selected = 0.2
+                )
+              )
+            )
           )
         )
       ))

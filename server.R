@@ -227,7 +227,7 @@ server <- function(input, output, session) {
             style = glue::glue("height: {div_heights[['diesel']]}%;"),
             div(
               class = "tco-component-label right",
-              style = if(div_heights[['diesel']] == 0) "display: none;" else "",
+              style = if (div_heights[['diesel']] == 0) "display: none;" else "",
               "Diesel"
             )
           ),
@@ -282,7 +282,7 @@ server <- function(input, output, session) {
             },
             div(
               class = "tco-component-label left",
-              style = if(div_heights[['private_charging']] == 0) "display: none;" else "",
+              style = if (div_heights[['private_charging']] == 0) "display: none;" else "",
               "Depåladdning"
             )
           ),
@@ -295,7 +295,7 @@ server <- function(input, output, session) {
             },
             div(
               class = "tco-component-label left",
-              style = if(div_heights[['charger']] == 0) "display: none;" else "",
+              style = if (div_heights[['charger']] == 0) "display: none;" else "",
               "Laddinfra"
             )
           ),
@@ -510,44 +510,6 @@ server <- function(input, output, session) {
     )
   })
   
-  output$charger_cost <- renderUI({
-    div(
-      class = "frame-section secondary-inputs",
-      div(
-        class = "secondary-input",
-        numericInput(
-          "p_charger_cost",
-          "Installation laddare",
-          min = 0,
-          max = 1500000,
-          value = 250000,
-          step = 10000
-        ),
-        p("kr")
-      ),
-      div(
-        class = "secondary-input",
-        numericInput(
-          "p_grid_cost",
-          "Förstärkning elnät",
-          min = 0,
-          max = 1500000,
-          value = 0,
-          step = 10000
-        ),
-        p("kr")
-      ),
-      div(
-        class = "secondary-input",
-        numericInput(
-          "p_charger_sharing_n",
-          "Hur många fordon delar på laddaren?",
-          min = 1, max = 20, step = 1, value = 1
-        )
-      )
-    )
-  })
-  
   
   output$taxes <- renderUI({
     # if (input$p_vehicle_class == "van") {
@@ -641,97 +603,6 @@ server <- function(input, output, session) {
     )
     return(res)
     # }
-  })
-  
-  
-  output$service <- renderUI({
-    if (input$p_vehicle_class == "van") {
-      res <- div(
-        class = "frame-section secondary-inputs",
-        div(
-          class = "secondary-input",
-          numericInput(
-            "p_ice_service_cost",
-            "Servicekostnad per mil, bensin/dieselbil",
-            min = 1,
-            max = 25,
-            value = 8,
-            step = 0.5
-          ),
-          p("kr")
-        ),
-        div(
-          class = "secondary-input",
-          numericInput(
-            "p_bev_service_cost",
-            "Servicekostnad per mil, elbil",
-            min = 1,
-            max = 25,
-            value = 7.5,
-            step = 0.5
-          ),
-          p("kr")
-        )
-      )
-      return(res)
-    } else {
-      res <- div(
-        class = "frame-section secondary-inputs",
-        div(
-          class = "secondary-input",
-          numericInput(
-            "p_ice_service_cost",
-            "Servicekostnad per mil, dieselbil",
-            min = 1,
-            max = 25,
-            value = 15,
-            step = 1
-          ),
-          p("kr")
-        ),
-        div(
-          class = "secondary-input",
-          numericInput(
-            "p_bev_service_cost",
-            "Servicekostnad per mil, elbil",
-            min = 1,
-            max = 25,
-            value = 13,
-            step = 1
-          ),
-          p("kr")
-        )
-      )
-      return(res)
-    }
-  })
-  
-  
-  output$tires <- renderUI({
-    div(
-      class = "frame-section secondary-inputs",
-      div(
-        class = "secondary-input",
-        numericInput(
-          "p_ice_tire_cost",
-          "Däckkostnad per mil, diesel/bensinbil",
-          min = 0,
-          max = 10,
-          value = 5,
-          step = 0.1
-        ),
-        p("kr")
-      ),
-      div(
-        class = "secondary-input",
-        selectInput(
-          "p_bev_tire_increase",
-          "Ökat däckslitage med elbil",
-          choices = setNames(seq(0, 1, 0.1), paste(seq(0, 100, 10), "%")),
-          selected = 0.2
-        )
-      )
-    )
   })
   
   

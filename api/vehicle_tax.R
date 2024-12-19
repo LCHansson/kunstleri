@@ -29,7 +29,7 @@ vehicle_tax <- function(case) {
       diesel_fuel_fee <- diesel_fuel_price_rate * case$ice_co2_value
       
       annual_malus <- if_else(
-        fuel_type == "diesel",
+        case$fuel_type == "diesel",
         basic_fee + co2_fee + diesel_environment_fee + diesel_fuel_fee,
         basic_fee + co2_fee
       )
