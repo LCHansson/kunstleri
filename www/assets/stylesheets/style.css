@@ -89,13 +89,7 @@ img {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  gap: 40px;
-}
-
-@media (max-width: 992px) {
-  .app-layout {
-    gap: 32px;
-  }
+  gap: 32px;
 }
 
 @media (max-width: 600px) {
@@ -323,6 +317,7 @@ img {
 }
 
 .empty-state {
+  flex: 1;
   border-radius: 10px;
   border: 1px solid var(--gray-border-neutral);
   background-color: white;
@@ -331,6 +326,13 @@ img {
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: 32px;
+}
+
+@media (max-width: 600px) {
+  .empty-state {
+    padding: 24px;
+  }
 }
 
 .empty-state-heading {
