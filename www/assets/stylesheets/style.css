@@ -510,13 +510,13 @@ img {
 .cost-driver-explanation {
   display: flex;
   flex-direction: column;
-  row-gap: 16px;
+  gap: 16px;
 }
 
 .cost-driver-component {
   display: flex;
   flex-direction: column;
-  row-gap: 2px;
+  gap: 2px;
   
   font-family: "Source Sans 3", sans-serif;
   font-weight: 400;
@@ -549,13 +549,13 @@ img {
 .cost-driver-coverage-explanation {
   display: flex;
   flex-direction: column;
-  row-gap: 16px;
+  gap: 16px;
 }
 
 .cost-driver-coverage-component {
   display: flex;
   flex-direction: column;
-  row-gap: 2px;
+  gap: 2px;
   
   font-family: "Source Sans 3", sans-serif;
   font-weight: 400;
