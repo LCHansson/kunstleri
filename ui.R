@@ -21,7 +21,15 @@ ui <- page_fluid(
     # tags$link(rel = "stylesheet", type = "text/css", href = "assets/stylesheets/style.css"),
     tags$meta(charset = "UTF-8"),
     tags$title("Elektrifieringskollen"),
-    tags$meta(name = "viewport", content = "width = device-width, initial-scale = 1")
+    tags$meta(name = "viewport", content = "width = device-width, initial-scale = 1"),
+    
+    tags$script(HTML("
+    $(document).ready(function() {
+      $('#view_calculation_explanation').on('click', function() {
+        $('#explanation-text').slideToggle('slow');  // Slide down/up the detailed inputs
+      });
+    });
+  ")),
   ),
   
   div(
@@ -595,6 +603,49 @@ ui <- page_fluid(
                 )
               )
             )
+          )
+        ),
+        
+        div(
+          class = "explanation",
+          div(
+            class = "explanation-button-container",
+            actionButton("view_calculation_explanation", "Se hur vi har räknat")
+          ),
+          div(
+            class = "explanation-text",
+            id = "explanation-text",
+            p("Adipiscing laoreet ornare habitasse potenti donec lacinia litora. Nunc tortor
+faucibus mus tincidunt cursus ornare curabitur, venenatis blandit. Odio dictumst
+placerat commodo pretium class urna; egestas tempus – mauris rutrum magnis primis
+dictumst! Nunc nibh sociis primis, elementum primis cum mus."),
+
+p("Lorem faucibus pulvinar pretium quis – ante a duis, quisque massa himenaeos potenti
+sed ac. Mus ultrices massa; nisi in – diam libero condimentum purus, eros class.
+Nisl curabitur convallis lectus vulputate tortor ullamcorper, mus turpis porttitor
+nibh lacinia! Sagittis mi rhoncus nulla taciti per! Mattis auctor pharetra est
+nostra et. Interdum tellus auctor orci aenean dis magnis sociosqu proin proin,
+ornare, tellus per nulla auctor aliquet molestie fringilla etiam."),
+
+p("Dolor justo fames netus: dictum est varius placerat ligula sodales. Cum magnis
+dictum aptent cubilia nullam eros! Odio feugiat aenean, quam mus ut senectus ut –
+tempus imperdiet orci vel, neque justo porttitor orci ridiculus."),
+
+p("Elit turpis phasellus litora facilisi velit tellus imperdiet. Pulvinar consequat
+augue sed purus justo nisi morbi pretium vitae, potenti imperdiet tortor etiam!
+Viverra potenti metus, suscipit: tristique litora: erat tristique senectus fringilla
+nec cras? Ac cras auctor venenatis elementum imperdiet, eget porta quam purus
+facilisi. Consequat ac pharetra pretium potenti, taciti curae; tristique curabitur
+habitasse."),
+
+p("Adipiscing habitant fringilla netus; class torquent tellus! Facilisi senectus
+lobortis, fusce rutrum risus ligula fermentum duis sagittis. Porttitor condimentum
+interdum ad quam luctus quam consequat – volutpat sagittis. Per cum mollis ad odio
+hac vivamus, tellus quisque dapibus leo ultricies. Eleifend ultrices luctus magna
+aliquam curabitur vulputate platea rutrum rutrum scelerisque. Consequat nisi nunc
+vulputate diam, massa nisl odio est eu convallis. Eleifend curabitur velit lacus
+augue lobortis ullamcorper commodo, pharetra eleifend imperdiet sed nulla, felis
+eros ligula netus elementum commodo venenatis elementum.")
           )
         )
       ))
