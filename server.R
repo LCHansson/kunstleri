@@ -590,7 +590,9 @@ server <- function(input, output, session) {
       div(
         style = glue::glue("display: {display_warning};"),
         class = "cost-warning",
-        "Hej"
+        "Lorem odio velit aliquet quis est euismod sollicitudin ridiculus dis facilisi id
+enim fermentum? Id magnis velit aliquet rhoncus justo.",
+        tooltip(tags$strong("Läs eventuellt mer här"), "Det här kanske blir en text om varför du fått en varning")
       )
     )
   })
