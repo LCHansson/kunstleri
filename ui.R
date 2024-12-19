@@ -196,7 +196,7 @@ ui <- page_fluid(
       
       div(
         id = "empty-state",
-        class = "empty-state",
+        class = "empty-state result-frame",
         div(
           class = "empty-state-heading",
           "Fyll i värden för att beräkna kostnaden"
@@ -210,8 +210,8 @@ ui <- page_fluid(
       
       ## Result ----
       shinyjs::hidden(div(
-        class = "result",
         id = "result",
+        class = "result result-frame",
         # style = "display: none;",
         
         ## Result header ----

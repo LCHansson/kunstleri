@@ -299,40 +299,35 @@ img {
 
 /************* RESULT *************/
 
-.result {
+.result-frame {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  margin: 0px;
   padding: 24px;
-  gap: 12px;
   align-items: start;
-  position: relative;
   background-color: white;
   border-radius: 10px;
   border: 1px solid var(--gray-border-neutral);
-  position: relative;
+}
+
+@media (max-width: 600px) {
+  .result-frame {
+    padding: 24px;
+  }
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  gap: 12px;
 }
 
 .empty-state {
-  flex: 1;
-  border-radius: 10px;
-  border: 1px solid var(--gray-border-neutral);
-  background-color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 32px;
-}
-
-@media (max-width: 600px) {
-  .empty-state {
-    padding: 24px;
-  }
 }
 
 .empty-state-heading {
