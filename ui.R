@@ -25,6 +25,7 @@ ui <- page_fluid(
     
     tags$script(HTML("
     $(document).ready(function() {
+      $('#explanation-text').hide();  // Slide down/up the detailed inputs
       $('#view_calculation_explanation').on('click', function() {
         $('#explanation-text').slideToggle('slow');  // Slide down/up the detailed inputs
       });
