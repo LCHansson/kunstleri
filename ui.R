@@ -182,7 +182,8 @@ ui <- page_fluid(
         actionButton("run_sim_button", "Beräkna", class = "btn-primary"),
         
         ## Scenario buttons ----
-        div(
+        shinyjs::hidden(div(
+          id = "sidebar-scenarios",
           class = "sidebar-scenarios",
           div(
             class = "fine-print",
@@ -197,7 +198,7 @@ ui <- page_fluid(
             actionButton("scenario_3_button", "62 ton fjärrbil", class = "btn-secondary"),
             actionButton("scenario_4_button", "16 ton stadsbil", class = "btn-secondary")
           )
-        )
+        ))
       ),
       
       ## Empty state ----
