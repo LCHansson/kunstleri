@@ -641,7 +641,7 @@ server <- function(input, output, session) {
     output$tco_comparison_sum_explanation <- renderUI({
       div(
         class = "tco-bar-cost-span",
-        glue::glue("Prognos för den totala kostnaden för fordonet under avskrivningstiden ({input$p_vehicle_service_life} år)")
+        glue::glue("Prognos för fordonets totala kostnad under avskrivningstiden ({input$p_vehicle_service_life} år)")
       )
     })
     
