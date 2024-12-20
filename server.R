@@ -26,18 +26,23 @@ scoring_func <- cost_comparison_categories
 ui_is_visible <<- FALSE
 case_global <<- NULL
 
-
 ## App ----
 
 server <- function(input, output, session) {
   
   iv <- InputValidator$new()
   
+  iv$add_rule("p_diesel_truck_cost", sv_required("Fältet måste innehålla ett siffervärde"))
   iv$add_rule("p_diesel_truck_cost", sv_integer())
+  iv$add_rule("p_bev_truck_cost", sv_required("Fältet måste innehålla ett siffervärde"))
   iv$add_rule("p_bev_truck_cost", sv_integer())
+  iv$add_rule("p_bev_climate_premium", sv_required("Fältet måste innehålla ett siffervärde"))
   iv$add_rule("p_bev_climate_premium", sv_integer())
+  iv$add_rule("p_battery_size", sv_required("Fältet måste innehålla ett siffervärde"))
   iv$add_rule("p_battery_size", sv_integer())
+  iv$add_rule("p_shorter_driving_distance", sv_required("Fältet måste innehålla ett siffervärde"))
   iv$add_rule("p_shorter_driving_distance", sv_numeric())
+  iv$add_rule("p_longer_driving_distance", sv_required("Fältet måste innehålla ett siffervärde"))
   iv$add_rule("p_longer_driving_distance", sv_numeric())
 
     
@@ -117,9 +122,7 @@ server <- function(input, output, session) {
   })
   
   ValidateInputs <- reactive({
-    # input$run_sim_button
     
-    # isolate({
     primary_inputs <- c(
       "p_diesel_truck_cost",
       "p_bev_truck_cost",
@@ -132,19 +135,17 @@ server <- function(input, output, session) {
     )
     
     input_vals <- map(primary_inputs, function(i) input[[i]])
-    # input_vals_global <<- map(primary_inputs, function(i) input[[i]])
-    # })
     
-    # if (any(is.na(input_vals)) || any(is.null(input_vals)))
-    #   return(FALSE)
-    # else
+    if (any(is.na(input_vals)) || any(is.null(input_vals)))
+      return(FALSE)
+    else
       return(TRUE)
   })
   
   CaseData <- reactive({
     # input$run_sim_button
     
-    # message("ValidateInputs() = ", ValidateInputs())
+    message("ValidateInputs() = ", ValidateInputs())
     
     if (ValidateInputs()) {
       
