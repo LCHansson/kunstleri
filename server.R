@@ -45,8 +45,8 @@ server <- function(input, output, session) {
   iv$add_rule("p_shorter_driving_distance", sv_numeric())
   iv$add_rule("p_longer_driving_distance", sv_required("Fältet måste innehålla ett siffervärde"))
   iv$add_rule("p_longer_driving_distance", sv_numeric())
-
-    
+  
+  
   ValidateInputs <- reactive({
     
     primary_inputs <- c(
@@ -62,10 +62,15 @@ server <- function(input, output, session) {
     
     input_vals <- map(primary_inputs, function(i) input[[i]])
     
-    if (any(is.na(input_vals)) || any(is.null(input_vals)))
+    if (any(is.na(input_vals)) || any(is.null(input_vals))) {
       return(FALSE)
-    else
+    } else {
       return(TRUE)
+    }
+  })
+  
+  observe({
+    toggleState(id = "run_sim_button", condition = ValidateInputs())
   })
   
   
@@ -96,6 +101,7 @@ server <- function(input, output, session) {
   
   
   ## Vehicle class switch ----
+  
   observe({
     input$p_vehicle_class
     
@@ -125,7 +131,7 @@ server <- function(input, output, session) {
   ## Case data ----
   
   CaseInputs <- reactive({
-    input$run_sim_button
+    # input$run_sim_button
     
     # isolate({
     all_inputs <- reactiveValuesToList(input)
@@ -146,8 +152,6 @@ server <- function(input, output, session) {
   
   
   CaseData <- reactive({
-    # input$run_sim_button
-    
     message("ValidateInputs() = ", ValidateInputs())
     
     if (ValidateInputs()) {
