@@ -46,9 +46,8 @@
   --secondary-theme-orange: #fba162;
   --secondary-theme-petrol: #3db7e4;
   --secondary-theme-purple: #ae75ce;
-  --font-button-link-desktop: 600 18px / 1 "Source Sans 3", sans-serif;
-  --font-button-link-micro: 600 16px / 1 "Source Sans 3", sans-serif;
-  --font-button-link-mobile: 600 16px / 1 "Source Sans 3", sans-serif;
+  --font-button-desktop: 500 16px / 1 "Source Sans 3", sans-serif;
+  --font-button-mobile: 500 14px / 1 "Source Sans 3", sans-serif;
   --font-form-element-desktop: 600 16px / 1 "Source Sans 3", sans-serif;
   --font-form-element-mobile: 600 14px / 1 "Source Sans 3", sans-serif;
   --font-h1-desktop: 600 42px / 1.2 "Geologica", sans-serif;
@@ -61,11 +60,10 @@
   --font-h4-mobile: 600 18px / 1.2 "Geologica", sans-serif;
   --font-h5-micro: 600 16px / 1 "Geologica", sans-serif;
   --font-h5-subtitle: 600 16px / 1 "Geologica", sans-serif;
-  --font-large-tag: 600 18px / 1 "Source Sans 3", sans-serif;
-  --font-paragraph-desktop: 400 18px / 1.4 "Source Sans 3", sans-serif;
-  --font-paragraph-mobile: 400 16px / 1.4 "Source Sans 3", sans-serif;
   --font-preamble-desktop: 400 20px / 1.4 "Source Sans 3", sans-serif;
   --font-preamble-mobile: 400 18px / 1.4 "Source Sans 3", sans-serif;
+  --font-paragraph-desktop: 400 18px / 1.4 "Source Sans 3", sans-serif;
+  --font-paragraph-mobile: 400 16px / 1.4 "Source Sans 3", sans-serif;
   --font-quote-desktop: 600 26px / 1 "Source Sans 3", sans-serif;
   --font-quote-mobile: 600 22px / 1 "Source Sans 3", sans-serif;
 }
@@ -106,7 +104,7 @@ img {
   border: 1px solid var(--gray-border-neutral);
   display: flex;
   flex-direction: row;
-  gap: 40px;
+  gap: 32px;
   padding: 32px;
   background: var(--gray-color);
 }
@@ -245,11 +243,12 @@ img {
 
 .sidebar {
   width: 30%;
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 0px;
   align-self: start;
-  gap: 40px;
+  gap: 32px;
 }
 
 @media (max-width: 992px) {
@@ -258,15 +257,23 @@ img {
   }
 }
 
+@media (max-width: 600px) {
+  .sidebar {
+    gap: 24px;
+  }
+}
+
 .sidebar .btn-primary {
   width: 100%;
 }
 
 .sidebar-scenarios {
+  flex: 1;
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  text-align: center;
 }
 
 
@@ -703,34 +710,47 @@ img {
 .btn-primary {
   width: 100%;
   height: 40px;
-  background-color: var(--standard-theme-petrol);
   border-radius: 1000px;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  
-  font-family: "Source Sans 3", sans-serif;
-  font-weight: 400;
-  font-size: 18px;
+  border-color: transparent;
+  background: linear-gradient(95deg, #710049 33.14%, #e37222 136.24%);
+  color: white;
+  font: var(--font-button-desktop);
   line-height: 1.3;
   text-align: center;
-  color: #FFFFFF;
-  
   padding: 8px;
+}
+
+.btn-primary:hover {
+  border-color: transparent;
+  background: linear-gradient(94.28deg, #e37222 -139.24%, #710049 80.28%);
+  color: white;
+}
+
+.btn-primary.disabled {
+  border-color: transparent;
+  background: var(--neutral-greyscale-400);
+  color: white;
 }
 
 .btn-secondary {
   border-radius: 1000px;
-  border: 1px solid var(--gray-border-neutral);
-  background: var(--neutral-greyscale-200);
-  
-  font-family: "Source Sans 3", sans-serif;
-  font-weight: 400;
-  font-size: 12px;
+  border: 2px solid var(--secondary-theme-magenta);
+  background: none;
+  color: var(--standard-theme-magenta);
+  font: var(--font-button-desktop);
   line-height: 1.3;
   text-align: center;
-  color: var(--standard-theme-petrol);
-  
-  padding: 6px 12px;
+  padding: 6px 24px;
+}
+
+.btn-secondary:hover {
+  border-color: transparent;
+  background: var(--standard-theme-magenta);
+  color: white;
+}
+
+.btn-secondary.disabled {
+  border-color: var(--neutral-greyscale-400);
+  background: white;
+  color: var(--neutral-greyscale-400);
 }
