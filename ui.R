@@ -248,6 +248,7 @@ ui <- page_fluid(
           class = "result-graph",
           id = "calculator-bar-id",
           uiOutput("tco_comparison_bars_ui"),
+          uiOutput("tco_comparison_sum_explanation"),
           uiOutput("profitability_warning")
         ),
         
