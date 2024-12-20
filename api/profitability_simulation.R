@@ -11,36 +11,14 @@ profitability_simulation <- function(case) {
   
   
   ## Calculate totals ----
-  if (all(c("include_private_charging", "include_public_charging") %in% case$charge_modes)) {
-    # Both charging modes (standard case)
-    case$sim_grid$total_private_electricity_consumption = case$dist_model$area_below_battery * case$number_of_operating_days * case$electricity_per_10km / 10
-    case$sim_grid$total_public_electricity_consumption = case$dist_model$area_above_battery * case$number_of_operating_days * case$electricity_per_10km / 10
-    case$sim_grid$total_private_electricity_cost = case$sim_grid$total_private_electricity_consumption * case$private_charging_cost
-    case$sim_grid$total_public_electricity_cost = case$sim_grid$total_public_electricity_consumption * case$public_charging_cost
-    case$sim_grid$total_diesel_consumption = case$dist_model$area_total * case$number_of_operating_days * case$diesel_per_10km / 10
-    case$sim_grid$total_diesel_cost = case$sim_grid$total_diesel_consumption * case$diesel_cost
-  } else if ("include_private_charging" %in% case$charge_modes) {
-    # Only private charging
-    # NOTE: Should display warning
-    case$sim_grid$total_private_electricity_consumption = case$dist_model$area_below_battery * case$sim_grid$number_of_operating_days * case$electricity_per_10km / 10
-    case$sim_grid$total_public_electricity_consumption = 0
-    case$sim_grid$total_private_electricity_cost = case$sim_grid$total_private_electricity_consumption * case$private_charging_cost
-    case$sim_grid$total_public_electricity_cost = case$sim_grid$total_public_electricity_consumption * case$public_charging_cost
-    case$sim_grid$total_diesel_consumption = case$dist_model$area_below_battery * case$number_of_operating_days * case$diesel_per_10km / 10
-    case$sim_grid$total_diesel_cost = case$sim_grid$total_diesel_consumption * case$diesel_cost
-  } else if ("include_public_charging" %in% case$charge_modes) {
-    # Only public charging
-    case$sim_grid$total_private_electricity_consumption = 0
-    case$sim_grid$total_public_electricity_consumption = case$dist_model$area_total * case$number_of_operating_days * case$electricity_per_10km / 10
-    case$sim_grid$total_private_electricity_cost = case$sim_grid$total_private_electricity_consumption * case$private_charging_cost
-    case$sim_grid$total_public_electricity_cost = case$sim_grid$total_public_electricity_consumption * case$public_charging_cost
-    case$sim_grid$total_diesel_consumption = case$dist_model$area_total * case$number_of_operating_days * case$diesel_per_10km / 10
-    case$sim_grid$total_diesel_cost = case$sim_grid$total_diesel_consumption * case$diesel_cost
-  }
-  # No charging? Should display warning
   
+  case$sim_grid$total_private_electricity_consumption = case$dist_model$area_below_battery * case$number_of_operating_days * case$electricity_per_10km / 10
+  case$sim_grid$total_public_electricity_consumption = case$dist_model$area_above_battery * case$number_of_operating_days * case$electricity_per_10km / 10
+  case$sim_grid$total_private_electricity_cost = case$sim_grid$total_private_electricity_consumption * case$private_charging_cost
+  case$sim_grid$total_public_electricity_cost = case$sim_grid$total_public_electricity_consumption * case$public_charging_cost
+  case$sim_grid$total_diesel_consumption = case$dist_model$area_total * case$number_of_operating_days * case$diesel_per_10km / 10
+  case$sim_grid$total_diesel_cost = case$sim_grid$total_diesel_consumption * case$diesel_cost
   
-  ## Optional parameters ----
   
   ## Charging infrastructure ----
   if (isTRUE(case$opts$include_charger)) {
@@ -48,6 +26,7 @@ profitability_simulation <- function(case) {
   } else {
     charger_added_cost <- list(ice = 0, bev = 0)
   }
+  
   
   ## Taxes and levies ----
   if (isTRUE(case$opts$include_taxes)) {
