@@ -56,8 +56,7 @@ server <- function(input, output, session) {
       "p_battery_size",
       "p_shorter_driving_distance",
       "p_longer_driving_distance",
-      "p_frequency_above_typical_range",
-      "p_charge_modes"
+      "p_frequency_above_typical_range"
     )
     
     input_vals <- map(primary_inputs, function(i) input[[i]])

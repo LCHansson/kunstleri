@@ -168,17 +168,7 @@ ui <- page_fluid(
             ),
             selected = 0.2,
             selectize = FALSE
-          ),
-          
-          shinyjs::hidden(checkboxGroupInput(
-            "p_charge_modes", 
-            label = NULL,
-            inline = TRUE,
-            # choices = c("Publik snabbladdning" = "include_public_charging", "Depåladdning" = "include_private_charging"),
-            choiceValues = list("include_private_charging", "include_public_charging"),
-            choiceNames = list("Har tillgång till depåladdare", "Kan ladda publikt vid behov"),
-            selected = c("include_public_charging", "include_private_charging")
-          ))
+          )
         ),
         
         actionButton("run_sim_button", "Beräkna", class = "btn-primary"),
