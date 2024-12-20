@@ -165,8 +165,9 @@ ui <- page_fluid(
               "En dag varannan vecka" = 0.1,
               "Någon dag i månaden" = 0.05,
               "Några dagar per år" = 0.01
-            ), selected = 0.2,
-            selectize = TRUE
+            ),
+            selected = 0.2,
+            selectize = FALSE
           ),
           
           shinyjs::hidden(checkboxGroupInput(
@@ -376,7 +377,8 @@ ui <- page_fluid(
                   "p_night_charging",
                   "Hur mycket laddar bilen över natt?",
                   choices = setNames(seq(0, 1, 0.1), paste(seq(0, 100, 10), "%")),
-                  selected = 1.0
+                  selected = 1.0,
+                  selectize = FALSE
                 )
               ),
               div(
@@ -385,7 +387,8 @@ ui <- page_fluid(
                   "p_day_extra_home_charging",
                   "Hur mycket laddar bilen mellan skift?",
                   choices = setNames(seq(0, 1, 0.1), paste(seq(0, 100, 10), "%")),
-                  selected = 0
+                  selected = 0,
+                  selectize = FALSE
                 )
               ),
               div(
@@ -394,7 +397,8 @@ ui <- page_fluid(
                   "p_public_charging_availability",
                   "Kan bilen ladda publikt vid behov?",
                   choices = c("Ja" = "ja", "Nej" = "nej"),
-                  selected = "ja"
+                  selected = "ja",
+                  selectize = FALSE
                 )
               )
               
@@ -478,7 +482,8 @@ ui <- page_fluid(
                   "p_fuel_type",
                   "Bränsletyp förbränningsmotor",
                   choices = c("Diesel" = "diesel", "Annat bränsle" = "ej diesel"),
-                  selected = "Diesel"
+                  selected = "Diesel",
+                  selectize = FALSE
                 )
               )),
               shinyjs::hidden(div(
@@ -526,7 +531,8 @@ ui <- page_fluid(
                   "p_trailer_type",
                   "Draganordning",
                   choices = c("Dragbil" = "dragbil", "Ingen" = "utan", "Annat påhäng" = "annan"),
-                  selected = "utan"
+                  selected = "utan",
+                  selectize = FALSE
                 )
               ),
               div(
@@ -536,7 +542,8 @@ ui <- page_fluid(
                   "p_road_toll_duty",
                   "Vägavgiftspliktig",
                   choices = c("Ja" = "ja", "Nej" = "nej"),
-                  selected = "ja"
+                  selected = "ja",
+                  selectize = FALSE
                 )
               )
             )    
@@ -608,7 +615,8 @@ ui <- page_fluid(
                   "p_bev_tire_increase",
                   "Ökat däckslitage med elbil",
                   choices = setNames(seq(0, 1, 0.1), paste(seq(0, 100, 10), "%")),
-                  selected = 0.2
+                  selected = 0.2,
+                  selectize = FALSE
                 )
               )
             )
