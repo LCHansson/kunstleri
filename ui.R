@@ -623,7 +623,7 @@ ui <- page_fluid(
           class = "explanation",
           div(
             class = "explanation-button-container",
-            actionButton("view_calculation_explanation", "Se hur vi har räknat")
+            actionButton("view_calculation_explanation", "Se hur vi har räknat", class = "btn-secondary")
           ),
           div(
             class = "explanation-text",
