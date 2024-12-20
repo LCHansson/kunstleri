@@ -192,7 +192,7 @@ ui <- page_fluid(
             "Du kan också testa ett av följande scenarier:"
           ),
           div(
-            class = "sidebar-scenario-buttons",
+            class = "scenario-buttons",
             actionButton("scenario_1_button", "Dagligvaror glesbygd", class = "btn-secondary"),
             actionButton("scenario_2_button", "Skogsbil", class = "btn-secondary"),
             actionButton("scenario_3_button", "62 ton fjärrbil", class = "btn-secondary"),
@@ -215,7 +215,7 @@ ui <- page_fluid(
           htmltools::HTML("Har du inga siffror framför dig just nu? <br>Testa ett av följande scenarier:")
         ),
         div(
-          class = "empty-state-scenario-buttons",
+          class = "scenario-buttons",
           actionButton("scenario_1_button", "Dagligvaror glesbygd", class = "btn-secondary"),
           actionButton("scenario_2_button", "Skogsbil", class = "btn-secondary"),
           actionButton("scenario_3_button", "62 ton fjärrbil", class = "btn-secondary"),
