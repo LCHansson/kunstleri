@@ -30,6 +30,7 @@ case_global <<- NULL
 
 server <- function(input, output, session) {
   
+  ## Input validation ----
   iv <- InputValidator$new()
   
   iv$add_rule("p_diesel_truck_cost", sv_required("Fältet måste innehålla ett siffervärde"))
@@ -46,6 +47,28 @@ server <- function(input, output, session) {
   iv$add_rule("p_longer_driving_distance", sv_numeric())
 
     
+  ValidateInputs <- reactive({
+    
+    primary_inputs <- c(
+      "p_diesel_truck_cost",
+      "p_bev_truck_cost",
+      "p_bev_climate_premium",
+      "p_battery_size",
+      "p_shorter_driving_distance",
+      "p_longer_driving_distance",
+      "p_frequency_above_typical_range",
+      "p_charge_modes"
+    )
+    
+    input_vals <- map(primary_inputs, function(i) input[[i]])
+    
+    if (any(is.na(input_vals)) || any(is.null(input_vals)))
+      return(FALSE)
+    else
+      return(TRUE)
+  })
+  
+  
   ## Empty state ----
   
   observe({
@@ -121,26 +144,6 @@ server <- function(input, output, session) {
     params
   })
   
-  ValidateInputs <- reactive({
-    
-    primary_inputs <- c(
-      "p_diesel_truck_cost",
-      "p_bev_truck_cost",
-      "p_bev_climate_premium",
-      "p_battery_size",
-      "p_shorter_driving_distance",
-      "p_longer_driving_distance",
-      "p_frequency_above_typical_range",
-      "p_charge_modes"
-    )
-    
-    input_vals <- map(primary_inputs, function(i) input[[i]])
-    
-    if (any(is.na(input_vals)) || any(is.null(input_vals)))
-      return(FALSE)
-    else
-      return(TRUE)
-  })
   
   CaseData <- reactive({
     # input$run_sim_button
@@ -148,7 +151,6 @@ server <- function(input, output, session) {
     message("ValidateInputs() = ", ValidateInputs())
     
     if (ValidateInputs()) {
-      
       # isolate({
       ## Get case params
       case <- sensible_defaults
@@ -179,17 +181,13 @@ server <- function(input, output, session) {
     } else {
       return(case_global)
     }
-    
   })
+  
   
   BarHeights <- reactive({
     case <- CaseData()
     if (is.null(case))
       return(NULL)
-    
-    # total_height <- 200
-    
-    # conf_interval <- c(lower = 0.05, higher = 0.95)
     
     max_bar_height <- max(case$sim_grid$bev_total_tco, case$sim_grid$ice_total_tco)
     
@@ -212,12 +210,10 @@ server <- function(input, output, session) {
     ) / max_bar_height * 100
     
     
-    return(
-      list(
-        ice_height_shares = ice_height_shares,
-        bev_height_shares = bev_height_shares
-      )
-    )
+    return(list(
+      ice_height_shares = ice_height_shares,
+      bev_height_shares = bev_height_shares
+    ))
   })
   
   
@@ -237,7 +233,6 @@ server <- function(input, output, session) {
     
     coverage
   })
-  
   
   
   ## HTML graphs and UI components ----
@@ -731,10 +726,6 @@ enim fermentum? Id magnis velit aliquet rhoncus justo.",
     updateActionButton(session, "run_sim_button")
   }) |> 
     bindEvent(input$scenario_4_button)
-  
-  
-  ## Old/discarded ----
-  
 }
 
 
