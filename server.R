@@ -71,6 +71,20 @@ server <- function(input, output, session) {
   
   observe({
     toggleState(id = "run_sim_button", condition = ValidateInputs())
+    
+    if (input$run_sim_button > 0 && ValidateInputs()) {
+      iv$enable()
+      
+      # if(ValidateInputs()) {
+      shinyjs::hide("empty-state")
+      shinyjs::show("result")
+      shinyjs::show("sidebar-scenarios")
+      shinyjs::hide("run_sim_button")
+      ui_is_visible <<- TRUE
+      # }
+      message("ui_is_visible == ", ui_is_visible)
+    } else
+      message("ui_is_visible == ", ui_is_visible)
   })
   
   
