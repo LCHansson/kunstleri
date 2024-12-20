@@ -183,8 +183,8 @@ server <- function(input, output, session) {
       
       case_global <<- case
       
-      case$warning <- 1
-      # })
+      case$warning <- sample(c(FALSE, TRUE), 1)
+      
       return(case)
     } else {
       return(case_global)
