@@ -565,30 +565,17 @@ server <- function(input, output, session) {
     
     bev_to_ice_ratio_diff <- bev_tco / ice_tco - 1
     
-    if (!"include_public_charging" %in% x$charge_modes && x$longer_driving_distance > x$dist_model$battery_capacity_km) {
-      warning_header <- tagList(tags$div(
-        class = "battery-range-warning",
-        bs_icon("exclamation-circle", class = "warning"),
-        # glue::glue("Beräkningen utgår från att bilen endast laddar i depå. Bilens maximala räckvidd är därmed {round(x$dist_model$battery_capacity_km)} km, vilket innebär att vissa längre körsträckor inte tagits med i beräkningen.")
-        glue::glue("Utan tillgång till publik laddning begränsas de möjliga körsträckorna. I beräkningen har därför antagits att ingen bil kör längre än batteriets maximala räckvidd på en dag, vilket är ca {round(x$dist_model$battery_capacity_km)} km.")
-      ))
-    } else
-      warning_header <- NULL
-    
-    tagList(
-      warning_header,
-      tags$div(
-        class = "scoring-tagline-result",
-        "TCO för elbilen beräknas bli ca",
-        tags$strong(perc_t(abs(bev_to_ice_ratio_diff)),
-                    if (bev_to_ice_ratio_diff >= 0)
-                      "högre"
-                    else
-                      "lägre"
-        ),
-        "än för dieselbilen."
-      )
-    # )
+    tags$div(
+      class = "scoring-tagline-result",
+      "TCO för elbilen beräknas bli ca",
+      tags$strong(perc_t(abs(bev_to_ice_ratio_diff)),
+                  if (bev_to_ice_ratio_diff >= 0)
+                    "högre"
+                  else
+                    "lägre"
+      ),
+      "än för dieselbilen."
+    )
     
   })
   
