@@ -203,13 +203,16 @@ ui <- page_fluid(
       div(
         id = "empty-state",
         class = "empty-state result-frame",
+        div(
+          class ="empty-state-illustration"          
+        ),
         p(
           class = "empty-state-heading",
-          "Fyll i värden för att beräkna kostnaden"
+          "Vad är billigast: elbil eller diesebil?"
         ),
         p(
           class = "empty-state-text",
-          htmltools::HTML("Har du inga siffror framför dig just nu? <br>Testa ett av följande scenarier:")
+          htmltools::HTML("Fyll i dina siffror och tryck ”Beräkna”, eller testa ett av följande scenarier:")
         ),
         div(
           class = "scenario-buttons",
