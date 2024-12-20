@@ -187,10 +187,7 @@ ui <- page_fluid(
         shinyjs::hidden(div(
           id = "sidebar-scenarios",
           class = "sidebar-scenarios",
-          div(
-            class = "fine-print",
-            "Du kan också testa ett av följande scenarier:"
-          ),
+          p("Du kan också testa ett av följande scenarier:"),
           div(
             class = "scenario-buttons",
             actionButton("scenario_1_button", "Dagligvaror glesbygd", class = "btn-secondary"),
