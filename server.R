@@ -1,6 +1,7 @@
 ## Libs ----
 library(shiny)
 library(shinyjs)
+library(shinyvalidate)
 
 ## Helpers ----
 # App helpers
@@ -30,12 +31,25 @@ case_global <<- NULL
 
 server <- function(input, output, session) {
   
+  iv <- InputValidator$new()
+  
+  iv$add_rule("p_diesel_truck_cost", sv_integer())
+  iv$add_rule("p_bev_truck_cost", sv_integer())
+  iv$add_rule("p_bev_climate_premium", sv_integer())
+  iv$add_rule("p_battery_size", sv_integer())
+  iv$add_rule("p_shorter_driving_distance", sv_numeric())
+  iv$add_rule("p_longer_driving_distance", sv_numeric())
+
+    
   ## Empty state ----
   
   observe({
     input$run_sim_button
     
     isolate({
+      if (input$run_sim_button > 0)
+        iv$enable()
+      
       
       if (input$run_sim_button > 0) {
         
@@ -120,16 +134,16 @@ server <- function(input, output, session) {
     # input_vals_global <<- map(primary_inputs, function(i) input[[i]])
     # })
     
-    if (any(is.na(input_vals)) || any(is.null(input_vals)))
-      return(FALSE)
-    else
+    # if (any(is.na(input_vals)) || any(is.null(input_vals)))
+    #   return(FALSE)
+    # else
       return(TRUE)
   })
   
   CaseData <- reactive({
     # input$run_sim_button
     
-    message("ValidateInputs() = ", ValidateInputs())
+    # message("ValidateInputs() = ", ValidateInputs())
     
     if (ValidateInputs()) {
       
