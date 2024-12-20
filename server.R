@@ -281,27 +281,16 @@ server <- function(input, output, session) {
             p(glue::glue("Andel av TCO: {60} %"))
           )),
           tooltip(div(
-            class = "tco-component tco-component-vehicle",
-            style = glue::glue("height: {div_heights$ice_height_shares[['vehicle']]}%;"),
-            div(
-              class =  "tco-component-shape"
-            ),
-            div(
-              class = "tco-component-label right",
-              "Fordon"
-            )
-          ),
-          tagList(
-            p(glue::glue("Kostnad fordon: {input$p_bev_truck_cost} kr")),
-            p(glue::glue("Andel av TCO: {60} %"))
-          )),
-          tooltip(div(
-            class = "tco-component tco-component-vehicle",
-            style = glue::glue("height: {div_heights$ice_height_shares[['taxes']]}%;"),
+            class = "tco-component tco-component-charger",
+            style = if (div_heights$ice_height_shares[['taxes']] != 0) {
+              glue::glue("height: {div_heights$ice_height_shares[['taxes']]}%;")
+            } else {
+              "display: none; margin: 0; padding: 0; border-width: 0;"
+            },
             div(
               class = "tco-component-label right",
               style = if (div_heights$ice_height_shares[['taxes']] == 0) "display: none;" else "",
-              "Skatt och avgifter"
+              "Skatt"
             )
           ),
           tagList(
@@ -309,8 +298,12 @@ server <- function(input, output, session) {
             p(glue::glue("Andel av TCO: {60} %"))
           )),
           tooltip(div(
-            class = "tco-component tco-component-vehicle",
-            style = glue::glue("height: {div_heights$ice_height_shares[['maintenance']]}%;"),
+            class = "tco-component tco-component-charger",
+            style = if (div_heights$ice_height_shares[['maintenance']] != 0) {
+              glue::glue("height: {div_heights$ice_height_shares[['maintenance']]}%;")
+            } else {
+              "display: none; margin: 0; padding: 0; border-width: 0;"
+            },
             div(
               class = "tco-component-label right",
               style = if (div_heights$ice_height_shares[['maintenance']] == 0) "display: none;" else "",
@@ -322,12 +315,31 @@ server <- function(input, output, session) {
             p(glue::glue("Andel av TCO: {60} %"))
           )),
           tooltip(div(
-            class = "tco-component tco-component-vehicle",
-            style = glue::glue("height: {div_heights$ice_height_shares[['tires']]}%;"),
+            class = "tco-component tco-component-charger",
+            style = if (div_heights$ice_height_shares[['tires']] != 0) {
+              glue::glue("height: {div_heights$ice_height_shares[['tires']]}%;")
+            } else {
+              "display: none; margin: 0; padding: 0; border-width: 0;"
+            },
             div(
               class = "tco-component-label right",
               style = if (div_heights$ice_height_shares[['tires']] == 0) "display: none;" else "",
               "Däck"
+            )
+          ),
+          tagList(
+            p(glue::glue("Kostnad fordon: {input$p_bev_truck_cost} kr")),
+            p(glue::glue("Andel av TCO: {60} %"))
+          )),
+          tooltip(div(
+            class = "tco-component tco-component-vehicle",
+            style = glue::glue("height: {div_heights$ice_height_shares[['vehicle']]}%;"),
+            div(
+              class =  "tco-component-shape"
+            ),
+            div(
+              class = "tco-component-label right",
+              "Fordon"
             )
           ),
           tagList(
@@ -357,7 +369,7 @@ server <- function(input, output, session) {
             style = if (div_heights$bev_height_shares[['public_charging']] != 0) {
               glue::glue("height: {div_heights$bev_height_shares[['public_charging']]}%;")
             } else {
-              "display: none; margin: 0; padding: 0;"
+              "display: none; margin: 0; padding: 0; border-width: 0;"
             },
             div(
               class = "tco-component-label left",
@@ -374,12 +386,80 @@ server <- function(input, output, session) {
             style = if (div_heights$bev_height_shares[['private_charging']] != 0) {
               glue::glue("height: {div_heights$bev_height_shares[['private_charging']]}%;")
             } else {
-              "display: none; margin: 0; padding: 0;"
+              "display: none; margin: 0; padding: 0; border-width: 0;"
             },
             div(
               class = "tco-component-label left",
               style = if (div_heights$bev_height_shares[['private_charging']] == 0) "display: none;" else "",
               "Depåladdning"
+            )
+          ),
+          tagList(
+            p(glue::glue("Kostnad fordon: {input$p_bev_truck_cost} kr")),
+            p(glue::glue("Andel av TCO: {60} %"))
+          )),
+          tooltip(div(
+            class = "tco-component tco-component-charger",
+            style = if (div_heights$bev_height_shares[['charging_infrastructure']] != 0) {
+              glue::glue("height: {div_heights$bev_height_shares[['charging_infrastructure']]}%;")
+            } else {
+              "display: none; margin: 0; padding: 0; border-width: 0;"
+            },
+            div(
+              class = "tco-component-label left",
+              style = if (div_heights$bev_height_shares[['charging_infrastructure']] == 0) "display: none;" else "",
+              "Laddinfra"
+            )
+          ),
+          tagList(
+            p(glue::glue("Kostnad fordon: {input$p_bev_truck_cost} kr")),
+            p(glue::glue("Andel av TCO: {60} %"))
+          )),
+          tooltip(div(
+            class = "tco-component tco-component-charger",
+            style = if (div_heights$bev_height_shares[['taxes']] != 0) {
+              glue::glue("height: {div_heights$bev_height_shares[['taxes']]}%;")
+            } else {
+              "display: none; margin: 0; padding: 0; border-width: 0;"
+            },
+            div(
+              class = "tco-component-label left",
+              style = if (div_heights$bev_height_shares[['taxes']] == 0) "display: none;" else "",
+              "Skatt"
+            )
+          ),
+          tagList(
+            p(glue::glue("Kostnad fordon: {input$p_bev_truck_cost} kr")),
+            p(glue::glue("Andel av TCO: {60} %"))
+          )),
+          tooltip(div(
+            class = "tco-component tco-component-charger",
+            style = if (div_heights$bev_height_shares[['maintenance']] != 0) {
+              glue::glue("height: {div_heights$bev_height_shares[['maintenance']]}%;")
+            } else {
+              "display: none; margin: 0; padding: 0; border-width: 0;"
+            },
+            div(
+              class = "tco-component-label left",
+              style = if (div_heights$bev_height_shares[['maintenance']] == 0) "display: none;" else "",
+              "Service"
+            )
+          ),
+          tagList(
+            p(glue::glue("Kostnad fordon: {input$p_bev_truck_cost} kr")),
+            p(glue::glue("Andel av TCO: {60} %"))
+          )),
+          tooltip(div(
+            class = "tco-component tco-component-charger",
+            style = if (div_heights$bev_height_shares[['tires']] != 0) {
+              glue::glue("height: {div_heights$bev_height_shares[['tires']]}%;")
+            } else {
+              "display: none; margin: 0; padding: 0; border-width: 0;"
+            },
+            div(
+              class = "tco-component-label left",
+              style = if (div_heights$bev_height_shares[['tires']] == 0) "display: none;" else "",
+              "Däck"
             )
           ),
           tagList(
@@ -400,90 +480,21 @@ server <- function(input, output, session) {
           tagList(
             p(glue::glue("Kostnad fordon: {input$p_bev_truck_cost} kr")),
             p(glue::glue("Andel av TCO: {60} %"))
-          )),
-          tooltip(div(
-            class = "tco-component tco-component-charger",
-            style = if (div_heights$bev_height_shares[['charging_infrastructure']] != 0) {
-              glue::glue("height: {div_heights$bev_height_shares[['charging_infrastructure']]}%;")
-            } else {
-              "display: none; margin: 0; padding: 0;"
-            },
-            div(
-              class = "tco-component-label left",
-              style = if (div_heights$bev_height_shares[['charging_infrastructure']] == 0) "display: none;" else "",
-              "Laddinfra"
-            )
-          ),
-          tagList(
-            p(glue::glue("Kostnad fordon: {input$p_bev_truck_cost} kr")),
-            p(glue::glue("Andel av TCO: {60} %"))
-          )),
-          tooltip(div(
-            class = "tco-component tco-component-charger",
-            style = if (div_heights$bev_height_shares[['taxes']] != 0) {
-              glue::glue("height: {div_heights$bev_height_shares[['taxes']]}%;")
-            } else {
-              "display: none; margin: 0; padding: 0;"
-            },
-            div(
-              class = "tco-component-label left",
-              style = if (div_heights$bev_height_shares[['taxes']] == 0) "display: none;" else "",
-              "Skatt och avgifter"
-            )
-          ),
-          tagList(
-            p(glue::glue("Kostnad fordon: {input$p_bev_truck_cost} kr")),
-            p(glue::glue("Andel av TCO: {60} %"))
-          )),
-          tooltip(div(
-            class = "tco-component tco-component-charger",
-            style = if (div_heights$bev_height_shares[['maintenance']] != 0) {
-              glue::glue("height: {div_heights$bev_height_shares[['maintenance']]}%;")
-            } else {
-              "display: none; margin: 0; padding: 0;"
-            },
-            div(
-              class = "tco-component-label left",
-              style = if (div_heights$bev_height_shares[['maintenance']] == 0) "display: none;" else "",
-              "Service"
-            )
-          ),
-          tagList(
-            p(glue::glue("Kostnad fordon: {input$p_bev_truck_cost} kr")),
-            p(glue::glue("Andel av TCO: {60} %"))
-          )),
-          tooltip(div(
-            class = "tco-component tco-component-charger",
-            style = if (div_heights$bev_height_shares[['tires']] != 0) {
-              glue::glue("height: {div_heights$bev_height_shares[['tires']]}%;")
-            } else {
-              "display: none; margin: 0; padding: 0;"
-            },
-            div(
-              class = "tco-component-label left",
-              style = if (div_heights$bev_height_shares[['tires']] == 0) "display: none;" else "",
-              "Däck"
-            )
-          ),
-          tagList(
-            p(glue::glue("Kostnad fordon: {input$p_bev_truck_cost} kr")),
-            p(glue::glue("Andel av TCO: {60} %"))
           ))
-          ),
-          div(
-            # Stor etikett under stapeln
-            class = "tco-bar-label",
-            "Elbil"
-          ),
-          div(
-            # Kostnadsintervall under stora etiketten
-            class = "tco-bar-cost-span",
-            glue::glue("{tsep(case$sim_grid$bev_total_tco)} kr")
-          )
+        ),
+        div(
+          # Stor etikett under stapeln
+          class = "tco-bar-label",
+          "Elbil"
+        ),
+        div(
+          # Kostnadsintervall under stora etiketten
+          class = "tco-bar-cost-span",
+          glue::glue("{tsep(case$sim_grid$bev_total_tco)} kr")
         )
       )
-      })
-    
+    )
+  })
     
     output$bev_cost_analysis <- renderUI({
       coverage <- CaseCoverage()
