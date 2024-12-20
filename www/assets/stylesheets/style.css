@@ -343,13 +343,21 @@ img {
 }
 
 .empty-state-heading {
-  width: 80%;
   font: var(--font-h3-desktop);
 }
 
 .empty-state-text {
-  width: 80%;
   font: var(--font-preamble-desktop);
+}
+
+@media (max-width: 400px) {
+  br {
+    display: none;
+  }
+}
+
+.empty-state-scenario-buttons {
+  margin-top: 1rem;  
 }
 
 .result-header {
