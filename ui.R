@@ -183,7 +183,8 @@ ui <- page_fluid(
         actionButton("run_sim_button", "Beräkna", class = "btn-primary"),
         
         ## Scenario buttons ----
-        div(
+        shinyjs::hidden(div(
+          id = "sidebar-scenarios",
           class = "sidebar-scenarios",
           div(
             class = "fine-print",
@@ -198,7 +199,7 @@ ui <- page_fluid(
             actionButton("scenario_3_button", "62 ton fjärrbil", class = "btn-secondary"),
             actionButton("scenario_4_button", "16 ton stadsbil", class = "btn-secondary")
           )
-        )
+        ))
       ),
       
       ## Empty state ----
@@ -206,13 +207,20 @@ ui <- page_fluid(
       div(
         id = "empty-state",
         class = "empty-state result-frame",
-        div(
+        p(
           class = "empty-state-heading",
           "Fyll i värden för att beräkna kostnaden"
         ),
-        div(
+        p(
           class = "empty-state-text",
-          "Har du inga siffror framför dig just nu? Testa ett scenario längst ner till vänster."
+          htmltools::HTML("Har du inga siffror framför dig just nu? <br>Testa ett av följande scenarier:")
+        ),
+        div(
+          class = "empty-state-scenario-buttons",
+          actionButton("scenario_1_button", "Dagligvaror glesbygd", class = "btn-secondary"),
+          actionButton("scenario_2_button", "Skogsbil", class = "btn-secondary"),
+          actionButton("scenario_3_button", "62 ton fjärrbil", class = "btn-secondary"),
+          actionButton("scenario_4_button", "16 ton stadsbil", class = "btn-secondary")
         )
       ),
       
