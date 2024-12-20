@@ -141,12 +141,7 @@ server <- function(input, output, session) {
   ## Case data ----
   
   CaseInputs <- reactive({
-    # input$run_sim_button
-    
-    # isolate({
     all_inputs <- reactiveValuesToList(input)
-    all_inputs$p_charge_modes <- input$p_charge_modes
-    test_cbgi <<- input$p_charge_modes
     
     all_inputs <- all_inputs[order(names(all_inputs))]
     # x <- x |> purrr::discard(stringr::str_detect(names(x), "button"))
@@ -165,7 +160,6 @@ server <- function(input, output, session) {
     message("ValidateInputs() = ", ValidateInputs())
     
     if (ValidateInputs()) {
-      # isolate({
       ## Get case params
       case <- sensible_defaults
       
@@ -494,317 +488,318 @@ server <- function(input, output, session) {
       )
     )
   })
+  
+  
+  output$bev_cost_analysis <- renderUI({
+    coverage <- CaseCoverage()
     
-    output$bev_cost_analysis <- renderUI({
-      coverage <- CaseCoverage()
-      
+    div(
+      class = "tco-graph",
       div(
-        class = "tco-graph",
+        class = "cost-driver-coverage-explanation",
         div(
-          class = "cost-driver-coverage-explanation",
-          div(
-            class = "cost-driver-coverage-component",
-            tags$p(
-              tags$strong(
-                class = "text-coverage",
-                "Leveransförmåga en typisk dag"
-              ),
-              tooltip(
-                bs_icon("question-circle"),
-                "Kan du köra bilen hela dagen på den el du laddar på natten?
+          class = "cost-driver-coverage-component",
+          tags$p(
+            tags$strong(
+              class = "text-coverage",
+              "Leveransförmåga en typisk dag"
+            ),
+            tooltip(
+              bs_icon("question-circle"),
+              "Kan du köra bilen hela dagen på den el du laddar på natten?
               En elbil är oftast inte lönsam om du behöver stödladda alltför mycket. Därför bör
               bilens batteri i normalfallet kunna täcka 100% av körsträckan en
               \"vanlig dag på jobet\"."
-              )
-            ),
+            )
+          ),
+          tags$p(
+            "Ett fulladdat batteri kan leverera ungefär",
+            glue::glue("{perc_t(coverage$battery_coverage_of_typical_day)}"),
+            "av den el som krävs för att köra bilen en \"vanlig dag på jobbet\"."
+          ),
+          (if (coverage$battery_coverage_of_typical_day_is_low) { 
             tags$p(
-              "Ett fulladdat batteri kan leverera ungefär",
-              glue::glue("{perc_t(coverage$battery_coverage_of_typical_day)}"),
-              "av den el som krävs för att köra bilen en \"vanlig dag på jobbet\"."
-            ),
-            (if (coverage$battery_coverage_of_typical_day_is_low) { 
-              tags$p(
-                class = "cost-warning",
-                bs_icon("exclamation-circle", class = "warning"),
-                tags$em("Överväg att beställa ett större batteri till bilen.
+              class = "cost-warning",
+              bs_icon("exclamation-circle", class = "warning"),
+              tags$em("Överväg att beställa ett större batteri till bilen.
                       Merkostnaden för ett större batteri kan vara väsentligt
                       mindre än kostnaden för att stödladda bilen.")
-              )
-            })
-          ),
-          div(
-            class = "cost-driver-coverage-component",
-            tags$p(
-              tags$strong(
-                class = "text-coverage",
-                "Batteriets överkapacitet"),
-              popover(
-                bs_icon("question-circle"),
-                "Om du har väldigt ojämna körmönster, eller om batteriet har större
+            )
+          })
+        ),
+        div(
+          class = "cost-driver-coverage-component",
+          tags$p(
+            tags$strong(
+              class = "text-coverage",
+              "Batteriets överkapacitet"),
+            popover(
+              bs_icon("question-circle"),
+              "Om du har väldigt ojämna körmönster, eller om batteriet har större
               kapacitet än vad du behöver för att köra bilen en \"vanlig dag
               på jobbet\", kommer bilen att ha energi kvar i bilen när du kommer in
               i depå på kvällen. Då kan det vara kostnadseffektivt att överväga att
               antingen köpa en bil med ett mindre batteri för att få ned ekipagekostnaden,
               eller att se över möjligheten att sälja tillbaka el till nätet som
               \"peak shaving\"-el eller frekvensutjämning."
-              )
-            ),
+            )
+          ),
+          tags$p(
+            "Batteriet beräknas ha outnyttjad kapacitet motsvarande ",
+            glue::glue("{tsep_h(coverage$battery_overcapacity_energy)} kWh"),
+            "vilket motsvarar",
+            glue::glue("{perc_t(coverage$battery_overcapacity_share)}"),
+            "av den totala potentiella batteriladdningen över bilens livstid."
+          ),
+          (if (coverage$battery_overcapacity_share_is_low) { 
             tags$p(
-              "Batteriet beräknas ha outnyttjad kapacitet motsvarande ",
-              glue::glue("{tsep_h(coverage$battery_overcapacity_energy)} kWh"),
-              "vilket motsvarar",
-              glue::glue("{perc_t(coverage$battery_overcapacity_share)}"),
-              "av den totala potentiella batteriladdningen över bilens livstid."
-            ),
-            (if (coverage$battery_overcapacity_share_is_low) { 
-              tags$p(
-                class = "cost-warning",
-                bs_icon("exclamation-circle", class = "warning"),
-                tags$em("Undersök möjligheten att sälja tillbaka el till nätet för att få ned kostnaden
+              class = "cost-warning",
+              bs_icon("exclamation-circle", class = "warning"),
+              tags$em("Undersök möjligheten att sälja tillbaka el till nätet för att få ned kostnaden
                       för elbilen. Ett alternativ är att överväga att köpa en bil med ett mindre batteri.
                       Minskningen i inköpskostnad kan vara väsentligt större än kostnaden för att stödladda
                       vissa dagar.")
-              )
-            })
-          ),
-          div(
-            class = "cost-driver-coverage-component",
-            tags$p(
-              tags$strong(
-                class = "text-coverage",
-                "Täckningsgrad depåladdning"
-              ),
-              popover(
-                bs_icon("question-circle"),
-                "Mäter hur mycket av bilens beräknade totala energiåtgång som kommer
+            )
+          })
+        ),
+        div(
+          class = "cost-driver-coverage-component",
+          tags$p(
+            tags$strong(
+              class = "text-coverage",
+              "Täckningsgrad depåladdning"
+            ),
+            popover(
+              bs_icon("question-circle"),
+              "Mäter hur mycket av bilens beräknade totala energiåtgång som kommer
               från depåladdning. Om täckningagraden är låg betyder det att en stor
               del av elen du tankar måste komma från extern laddning, vanligen
               dyr snabbladdning. De flesta lönsamma transportupplägg använder sig av
               snabbladdning som stöd för dagarna med längst körsträckor och förlitar
               sig helt på depåladdning för en typisk kördag."
-              )
-            ),
+            )
+          ),
+          tags$p(
+            "Depåladdning täcker ca ",
+            glue::glue("{perc_t(coverage$battery_coverage_of_total)}"),
+            "av den totala fordonselen."
+          ),
+          (if (coverage$battery_coverage_of_total_is_low) { 
             tags$p(
-              "Depåladdning täcker ca ",
-              glue::glue("{perc_t(coverage$battery_coverage_of_total)}"),
-              "av den totala fordonselen."
-            ),
-            (if (coverage$battery_coverage_of_total_is_low) { 
-              tags$p(
-                class = "cost-warning",
-                bs_icon("exclamation-circle", class = "warning"),
-                tags$em("Överväg att beställa ett större batteri till bilen.
+              class = "cost-warning",
+              bs_icon("exclamation-circle", class = "warning"),
+              tags$em("Överväg att beställa ett större batteri till bilen.
                       Merkostnaden för ett större batteri kan vara väsentligt
                       mindre än kostnaden för att stödladda bilen.")
-              )
-            })
-          )
+            )
+          })
         )
       )
-    })
+    )
+  })
+  
+  
+  ## UI elements ----
+  
+  
+  output$scoring_header <- renderUI({
+    x <- CaseData()
     
+    ice_tco <- x$diesel_truck_cost + x$sim_grid$total_diesel_cost[[1]]
+    bev_tco <- x$bev_truck_cost +
+      x$charger_cost +
+      x$sim_grid$total_private_electricity_cost[[1]] +
+      x$sim_grid$total_public_electricity_cost[[1]]
     
-    ## UI elements ----
+    bev_to_ice_ratio_diff <- bev_tco/ice_tco - 1
     
+    scoring_text <- as.character(scoring_func(bev_to_ice_ratio_diff + 1))
+    HTML(scoring_text)
+  })
+  
+  output$scoring_tagline <- renderUI({
+    x <- CaseData()
+    if (is.null(x)) return(NULL)
     
-    output$scoring_header <- renderUI({
-      x <- CaseData()
-      
-      ice_tco <- x$diesel_truck_cost + x$sim_grid$total_diesel_cost[[1]]
-      bev_tco <- x$bev_truck_cost +
-        x$charger_cost +
-        x$sim_grid$total_private_electricity_cost[[1]] +
-        x$sim_grid$total_public_electricity_cost[[1]]
-      
-      bev_to_ice_ratio_diff <- bev_tco/ice_tco - 1
-      
-      scoring_text <- as.character(scoring_func(bev_to_ice_ratio_diff + 1))
-      HTML(scoring_text)
-    })
+    ice_tco <- x$diesel_truck_cost + x$sim_grid$total_diesel_cost[[1]]
+    bev_tco <- x$bev_truck_cost +
+      x$charger_cost +
+      x$sim_grid$total_private_electricity_cost[[1]] +
+      x$sim_grid$total_public_electricity_cost[[1]]
     
-    output$scoring_tagline <- renderUI({
-      x <- CaseData()
-      if (is.null(x)) return(NULL)
-      
-      ice_tco <- x$diesel_truck_cost + x$sim_grid$total_diesel_cost[[1]]
-      bev_tco <- x$bev_truck_cost +
-        x$charger_cost +
-        x$sim_grid$total_private_electricity_cost[[1]] +
-        x$sim_grid$total_public_electricity_cost[[1]]
-      
-      bev_to_ice_ratio_diff <- bev_tco / ice_tco - 1
-      
-      tags$div(
-        class = "scoring-tagline-result",
-        "TCO för elbilen beräknas bli ca",
-        tags$strong(perc_t(abs(bev_to_ice_ratio_diff)),
-                    if (bev_to_ice_ratio_diff >= 0)
-                      "högre"
-                    else
-                      "lägre"
-        ),
-        "än för dieselbilen."
-      )
-      
-    })
+    bev_to_ice_ratio_diff <- bev_tco / ice_tco - 1
     
-    output$tco_comparison_sum_explanation <- renderUI({
+    tags$div(
+      class = "scoring-tagline-result",
+      "TCO för elbilen beräknas bli ca",
+      tags$strong(perc_t(abs(bev_to_ice_ratio_diff)),
+                  if (bev_to_ice_ratio_diff >= 0)
+                    "högre"
+                  else
+                    "lägre"
+      ),
+      "än för dieselbilen."
+    )
+    
+  })
+  
+  output$tco_comparison_sum_explanation <- renderUI({
+    div(
+      class = "tco-bar-cost-span",
+      glue::glue("Prognos för fordonets totala kostnad under avskrivningstiden ({input$p_vehicle_service_life} år)")
+    )
+  })
+  
+  output$profitability_warning <- renderUI({
+    case <- CaseData()
+    
+    if (!is.null(case$warning) && isTRUE(case$warning))
+      display_warning <- "flex"
+    else
+      display_warning <- "none"
+    
+    div(
+      style = glue::glue("display: {display_warning};"),
+      class = "cost-warning",
       div(
-        class = "tco-bar-cost-span",
-        glue::glue("Prognos för fordonets totala kostnad under avskrivningstiden ({input$p_vehicle_service_life} år)")
-      )
-    })
-    
-    output$profitability_warning <- renderUI({
-      case <- CaseData()
-      
-      if (!is.null(case$warning))
-        display_warning <- "flex"
-      else
-        display_warning <- "none"
-      
+        class = "icon-wrapper",
+        HTML(r"(<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M272 384c9.6-31.9 29.5-59.1 49.2-86.2c0 0 0 0 0 0c5.2-7.1 10.4-14.2 15.4-21.4c19.8-28.5 31.4-63 31.4-100.3C368 78.8 289.2 0 192 0S16 78.8 16 176c0 37.3 11.6 71.9 31.4 100.3c5 7.2 10.2 14.3 15.4 21.4c0 0 0 0 0 0c19.8 27.1 39.7 54.4 49.2 86.2l160 0zM192 512c44.2 0 80-35.8 80-80l0-16-160 0 0 16c0 44.2 35.8 80 80 80zM112 176c0 8.8-7.2 16-16 16s-16-7.2-16-16c0-61.9 50.1-112 112-112c8.8 0 16 7.2 16 16s-7.2 16-16 16c-44.2 0-80 35.8-80 80z"/></svg>)")
+      ),
       div(
-        style = glue::glue("display: {display_warning};"),
-        class = "cost-warning",
-        div(
-          class = "icon-wrapper",
-          HTML(r"(<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M272 384c9.6-31.9 29.5-59.1 49.2-86.2c0 0 0 0 0 0c5.2-7.1 10.4-14.2 15.4-21.4c19.8-28.5 31.4-63 31.4-100.3C368 78.8 289.2 0 192 0S16 78.8 16 176c0 37.3 11.6 71.9 31.4 100.3c5 7.2 10.2 14.3 15.4 21.4c0 0 0 0 0 0c19.8 27.1 39.7 54.4 49.2 86.2l160 0zM192 512c44.2 0 80-35.8 80-80l0-16-160 0 0 16c0 44.2 35.8 80 80 80zM112 176c0 8.8-7.2 16-16 16s-16-7.2-16-16c0-61.9 50.1-112 112-112c8.8 0 16 7.2 16 16s-7.2 16-16 16c-44.2 0-80 35.8-80 80z"/></svg>)")
+        class = "cost-warning-text",
+        p(
+          class = "cost-warning-header",
+          "Tips! Överväg ett större batteri"
         ),
-        div(
-          class = "cost-warning-text",
-          p(
-            class = "cost-warning-header",
-            "Tips! Överväg ett större batteri"
-          ),
-          p("Merkostnaden kan vara mycket mindre än kostnaden för att stödladda bilen.")
-        )
+        p("Merkostnaden kan vara mycket mindre än kostnaden för att stödladda bilen.")
+      )
+    )
+  })
+  
+  
+  ## Display inputs (debugging) ----
+  
+  output$show_case_inputs <- renderTable({
+    
+    x <- CaseData()
+    
+    # x$sim_grid
+    data.frame(
+      names = names(x),
+      values = unlist(
+        map(x, ~ ( if (class(.x)[[1]] == "tbl_df") "Data frame" else as.character(.x[[1]]) ) )
+      )
+    )
+  })
+  
+  output$driving_range_plot <- renderPlot({
+    x <- CaseData()
+    
+    x$dists[1,] |> 
+      mutate(k_label = format(k, digits = 2)) |> 
+      unnest(cols = c(pdist)) |> 
+      ggplot(aes(x = x, y = y_pred)) +
+      geom_line() +
+      lims(
+        y = c(0, 1)
+      ) +
+      geom_point(aes(x = x_max), y = 0) +
+      geom_point(aes(x = x0_by_x_user), y = 0.5, color = "red") +
+      geom_point(aes(x = x_user, y = y_user_pred_x_user), color = "blue") +
+      geom_text(aes(label = paste0("k = ", k_label)), x = 50, y = 0.4, hjust = "inward") +
+      geom_text(aes(label = paste0("A = ", A)), x = 50, y = 0.25, hjust = "inward") +
+      geom_text(aes(label = paste0("nu = ", nu)), x = 50, y = 0.1, hjust = "inward")
+  })
+  
+  
+  
+  ## Load scenarios ----
+  
+  observe({
+    isolate({
+      loaded_case <- predefined_cases[[1]]
+      
+      names(loaded_case) <- paste0("p_", names(loaded_case))
+      
+      purrr::map(
+        names(loaded_case),
+        function(item) {
+          if (is.numeric(loaded_case[[item]]) && length(loaded_case[[item]] == 1))
+            updateNumericInput(session, item, value = loaded_case[[item]])
+          else if (is.numeric(loaded_case[[item]]))
+            updateSliderInput(session, item, value = loaded_case[[item]])
+          else if (is.character(loaded_case[[item]]))
+            updateCheckboxGroupInput(session, item, selected = loaded_case[[item]])
+        }
       )
     })
-    
-    
-    ## Display inputs (debugging) ----
-    
-    output$show_case_inputs <- renderTable({
+  }) |> 
+    bindEvent(input$scenario_1_button)
+  
+  observe({
+    isolate({
+      loaded_case <- predefined_cases[[2]]
       
-      x <- CaseData()
+      names(loaded_case) <- paste0("p_", names(loaded_case))
       
-      # x$sim_grid
-      data.frame(
-        names = names(x),
-        values = unlist(
-          map(x, ~ ( if (class(.x)[[1]] == "tbl_df") "Data frame" else as.character(.x[[1]]) ) )
-        )
+      purrr::map(
+        names(loaded_case),
+        function(item) {
+          if (is.numeric(loaded_case[[item]]) && length(loaded_case[[item]] == 1))
+            updateNumericInput(session, item, value = loaded_case[[item]])
+          else if (is.numeric(loaded_case[[item]]))
+            updateSliderInput(session, item, value = loaded_case[[item]])
+          else if (is.character(loaded_case[[item]]))
+            updateCheckboxGroupInput(session, item, selected = loaded_case[[item]])
+        }
       )
     })
-    
-    output$driving_range_plot <- renderPlot({
-      x <- CaseData()
+  }) |> 
+    bindEvent(input$scenario_2_button)
+  
+  observe({
+    isolate({
+      loaded_case <- predefined_cases[[3]]
       
-      x$dists[1,] |> 
-        mutate(k_label = format(k, digits = 2)) |> 
-        unnest(cols = c(pdist)) |> 
-        ggplot(aes(x = x, y = y_pred)) +
-        geom_line() +
-        lims(
-          y = c(0, 1)
-        ) +
-        geom_point(aes(x = x_max), y = 0) +
-        geom_point(aes(x = x0_by_x_user), y = 0.5, color = "red") +
-        geom_point(aes(x = x_user, y = y_user_pred_x_user), color = "blue") +
-        geom_text(aes(label = paste0("k = ", k_label)), x = 50, y = 0.4, hjust = "inward") +
-        geom_text(aes(label = paste0("A = ", A)), x = 50, y = 0.25, hjust = "inward") +
-        geom_text(aes(label = paste0("nu = ", nu)), x = 50, y = 0.1, hjust = "inward")
+      names(loaded_case) <- paste0("p_", names(loaded_case))
+      
+      purrr::map(
+        names(loaded_case),
+        function(item) {
+          if (is.numeric(loaded_case[[item]]) && length(loaded_case[[item]] == 1))
+            updateNumericInput(session, item, value = loaded_case[[item]])
+          else if (is.numeric(loaded_case[[item]]))
+            updateSliderInput(session, item, value = loaded_case[[item]])
+          else if (is.character(loaded_case[[item]]))
+            updateCheckboxGroupInput(session, item, selected = loaded_case[[item]])
+        }
+      )
     })
-    
-    
-    
-    ## Load scenarios ----
-    
-    observe({
-      isolate({
-        loaded_case <- predefined_cases[[1]]
-        
-        names(loaded_case) <- paste0("p_", names(loaded_case))
-        
-        purrr::map(
-          names(loaded_case),
-          function(item) {
-            if (is.numeric(loaded_case[[item]]) && length(loaded_case[[item]] == 1))
-              updateNumericInput(session, item, value = loaded_case[[item]])
-            else if (is.numeric(loaded_case[[item]]))
-              updateSliderInput(session, item, value = loaded_case[[item]])
-            else if (is.character(loaded_case[[item]]))
-              updateCheckboxGroupInput(session, item, selected = loaded_case[[item]])
-          }
-        )
-      })
-    }) |> 
-      bindEvent(input$scenario_1_button)
-    
-    observe({
-      isolate({
-        loaded_case <- predefined_cases[[2]]
-        
-        names(loaded_case) <- paste0("p_", names(loaded_case))
-        
-        purrr::map(
-          names(loaded_case),
-          function(item) {
-            if (is.numeric(loaded_case[[item]]) && length(loaded_case[[item]] == 1))
-              updateNumericInput(session, item, value = loaded_case[[item]])
-            else if (is.numeric(loaded_case[[item]]))
-              updateSliderInput(session, item, value = loaded_case[[item]])
-            else if (is.character(loaded_case[[item]]))
-              updateCheckboxGroupInput(session, item, selected = loaded_case[[item]])
-          }
-        )
-      })
-    }) |> 
-      bindEvent(input$scenario_2_button)
-    
-    observe({
-      isolate({
-        loaded_case <- predefined_cases[[3]]
-        
-        names(loaded_case) <- paste0("p_", names(loaded_case))
-        
-        purrr::map(
-          names(loaded_case),
-          function(item) {
-            if (is.numeric(loaded_case[[item]]) && length(loaded_case[[item]] == 1))
-              updateNumericInput(session, item, value = loaded_case[[item]])
-            else if (is.numeric(loaded_case[[item]]))
-              updateSliderInput(session, item, value = loaded_case[[item]])
-            else if (is.character(loaded_case[[item]]))
-              updateCheckboxGroupInput(session, item, selected = loaded_case[[item]])
-          }
-        )
-      })
-    }) |> 
-      bindEvent(input$scenario_3_button)
-    
-    observe({
-      isolate({
-        loaded_case <- predefined_cases[[4]]
-        
-        names(loaded_case) <- paste0("p_", names(loaded_case))
-        
-        purrr::map(
-          names(loaded_case),
-          function(item) {
-            if (is.numeric(loaded_case[[item]]) && length(loaded_case[[item]] == 1))
-              updateNumericInput(session, item, value = loaded_case[[item]])
-            else if (is.numeric(loaded_case[[item]]))
-              updateSliderInput(session, item, value = loaded_case[[item]])
-            else if (is.character(loaded_case[[item]]))
-              updateCheckboxGroupInput(session, item, selected = loaded_case[[item]])
-          }
-        )
-        
-      })
-      updateActionButton(session, "run_sim_button")
-    }) |> 
-      bindEvent(input$scenario_4_button)
-    }
+  }) |> 
+    bindEvent(input$scenario_3_button)
+  
+  observe({
+    isolate({
+      loaded_case <- predefined_cases[[4]]
+      
+      names(loaded_case) <- paste0("p_", names(loaded_case))
+      
+      purrr::map(
+        names(loaded_case),
+        function(item) {
+          if (is.numeric(loaded_case[[item]]) && length(loaded_case[[item]] == 1))
+            updateNumericInput(session, item, value = loaded_case[[item]])
+          else if (is.numeric(loaded_case[[item]]))
+            updateSliderInput(session, item, value = loaded_case[[item]])
+          else if (is.character(loaded_case[[item]]))
+            updateCheckboxGroupInput(session, item, selected = loaded_case[[item]])
+        }
+      )
+      
+    })
+    updateActionButton(session, "run_sim_button")
+  }) |> 
+    bindEvent(input$scenario_4_button)
+}
 
 

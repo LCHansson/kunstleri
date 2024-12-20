@@ -13,11 +13,9 @@ source("api/numericInputWithUnit.R")
 ui <- page_fluid(
   shinyjs::useShinyjs(),
   
-  # theme = bs_theme(),
-  # title = "TF BETARELEASE: TCO-jämförelse", lang = "sv",
-  
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = paste0("assets/stylesheets/style.css?", lubridate::seconds(Sys.time()))),
+    # On release: uncomment row below and remove row above
     # tags$link(rel = "stylesheet", type = "text/css", href = "assets/stylesheets/style.css"),
     tags$meta(charset = "UTF-8"),
     tags$title("Elektrifieringskollen"),
