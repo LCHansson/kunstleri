@@ -189,9 +189,7 @@ ui <- page_fluid(
           class = "sidebar-scenarios",
           div(
             class = "fine-print",
-            tags$span(
-              "Har du inga siffror framför dig just nu?",
-              tags$br("Testa ett av följande scenarios:"))
+            "Du kan också testa ett av följande scenarier:"
           ),
           div(
             class = "sidebar-scenario-buttons",
